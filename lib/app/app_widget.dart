@@ -8,7 +8,9 @@ class AppWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Rocket finances',
-      theme: ThemeData(brightness: Brightness.dark),
+      theme: ThemeData(brightness: Brightness.dark).copyWith(
+          inputDecorationTheme:
+              InputDecorationTheme(border: OutlineInputBorder())),
       initialRoute: AppRoutes.dashboard,
       routes: AppPages.pages,
     );
