@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rocket_finances/app/routes/app_pages.dart';
 import 'package:rocket_finances/app/ui/modules/home/home.dart';
 import 'package:rocket_finances/app/ui/shared/widgets/logged_app_bar_widget.dart';
+import 'package:rocket_finances/routes/app_pages.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

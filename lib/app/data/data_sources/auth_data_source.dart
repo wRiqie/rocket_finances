@@ -5,7 +5,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 abstract class AuthDataSource {
   Future<UserModel?> signIn(String email, String password);
 
-  Future<bool> signUp(SignUpCommand command);
+  Future<UserModel?> signUp(SignUpCommand command);
+
+  Future<UserModel?> getSession();
+
+  Future<void> signOut();
 }
 
 class AuthDataSourceSupaImp implements AuthDataSource {
@@ -42,7 +46,7 @@ class AuthDataSourceSupaImp implements AuthDataSource {
   }
 
   @override
-  Future<bool> signUp(SignUpCommand command) async {
+  Future<UserModel?> signUp(SignUpCommand command) async {
     final response = await _client.auth
         .signUp(password: command.password, email: command.email);
 
@@ -51,8 +55,35 @@ class AuthDataSourceSupaImp implements AuthDataSource {
     if (user != null) {
       await _client.from('users').insert(command.toMap());
 
-      return true;
+      return UserModel(name: command.name, email: command.email);
     }
-    return false;
+    return null;
+  }
+
+  @override
+  Future<UserModel?> getSession() async {
+    final user = _client.auth.currentUser;
+
+    if (user != null) {
+      final response = await _client
+          .from('users')
+          .select('id, auth_id, name, photo_url')
+          .filter('auth_id', 'eq', user.id);
+
+      if (response.isNotEmpty) {
+        final dbUser = response.first;
+        return UserModel(
+          name: dbUser['name'],
+          email: user.email ?? '',
+          photoUrl: dbUser['photo_url'],
+        );
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<void> signOut() {
+    return _client.auth.signOut();
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rocket_finances/app/routes/app_pages.dart';
+import 'package:get_it/get_it.dart';
+import 'package:rocket_finances/app/core/helpers/session_helper.dart';
+import 'package:rocket_finances/routes/app_pages.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
@@ -11,7 +13,9 @@ class AppWidget extends StatelessWidget {
       theme: ThemeData(brightness: Brightness.dark).copyWith(
           inputDecorationTheme:
               InputDecorationTheme(border: OutlineInputBorder())),
-      initialRoute: AppRoutes.dashboard,
+      initialRoute: GetIt.I<SessionHelper>().isSignedIn
+          ? AppRoutes.dashboard
+          : AppRoutes.signIn,
       routes: AppPages.pages,
     );
   }

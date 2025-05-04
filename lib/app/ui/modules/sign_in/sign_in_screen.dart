@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rocket_finances/routes/app_pages.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -10,13 +11,14 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
     final colorScheme = Theme.of(context).colorScheme;
     final containerColor = colorScheme.surfaceBright.withValues(alpha: .15);
 
     return Scaffold(
       bottomNavigationBar: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.pushNamed(context, AppRoutes.signUp);
+        },
         child: Container(
           padding: EdgeInsets.symmetric(
             horizontal: 18,
