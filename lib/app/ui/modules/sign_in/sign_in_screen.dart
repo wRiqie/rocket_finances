@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:rocket_finances/app/business_logic/cubits/auth/auth_cubit.dart';
+import 'package:rocket_finances/app/business_logic/cubits/auth/auth_state.dart';
+import 'package:rocket_finances/app/core/helpers/session_helper.dart';
+import 'package:rocket_finances/app/core/mixins/validators_mixin.dart';
+import 'package:rocket_finances/app/core/values/snackbars.dart';
+import 'package:rocket_finances/app/ui/shared/widgets/glow_logo_widget.dart';
 import 'package:rocket_finances/routes/app_pages.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -8,209 +16,220 @@ class SignInScreen extends StatefulWidget {
   State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInScreenState extends State<SignInScreen> with ValidatorsMixin {
+  final sessionHelper = GetIt.I<SessionHelper>();
+
+  final formKey = GlobalKey<FormState>();
+
+  final emailCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final containerColor = colorScheme.surfaceBright.withValues(alpha: .15);
 
-    return Scaffold(
-      bottomNavigationBar: InkWell(
-        onTap: () {
-          Navigator.pushNamed(context, AppRoutes.signUp);
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 18,
-            vertical: 10 + MediaQuery.of(context).viewPadding.bottom,
-          ),
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              text: 'Ainda não tem uma conta? ',
-              children: [
-                TextSpan(
-                  text: 'cadastre-se agora!',
-                  style: TextStyle(color: colorScheme.primary),
-                ),
-              ],
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is AuthSuccessState) {
+          sessionHelper.setCurrentUser(state.user);
+          Navigator.pushNamedAndRemoveUntil(
+              context, AppRoutes.dashboard, (route) => false);
+        } else if (state is AuthErrorState) {
+          ErrorSnackbar(context, message: state.error?.message);
+        }
+      },
+      child: Scaffold(
+        bottomNavigationBar: InkWell(
+          onTap: () {
+            Navigator.pushNamed(context, AppRoutes.signUp);
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 18,
+              vertical: 10 + MediaQuery.of(context).viewPadding.bottom,
+            ),
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                text: 'Ainda não tem uma conta? ',
+                children: [
+                  TextSpan(
+                    text: 'cadastre-se agora!',
+                    style: TextStyle(color: colorScheme.primary),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 20, 18, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(
-                  height: 40,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+        body: SingleChildScrollView(
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 20, 18, 0),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    GlowLogoWidget(colorScheme: colorScheme),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  'Rocket Finances',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  'Hora de tomar conta de suas finanças',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: colorScheme.onSurface.withValues(alpha: .6),
-                  ),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: containerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: colorScheme.surfaceContainer,
+                    SizedBox(
+                      height: 40,
                     ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 12,
-                    children: [
-                      Icon(
-                        Icons.g_mobiledata,
-                        size: 28,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GlowLogoWidget(colorScheme: colorScheme),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Rocket Finances',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w600,
                       ),
-                      Text(
-                        'Entre com o google',
-                        style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Hora de tomar conta de suas finanças',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: colorScheme.onSurface.withValues(alpha: .6),
                       ),
-                      Opacity(
-                        opacity: 0,
-                        child: Icon(
-                          Icons.g_mobiledata,
-                          size: 28,
-                          color: colorScheme.primary,
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: containerColor,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: colorScheme.surfaceContainer,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Row(
-                    children: [
-                      Expanded(child: Divider()),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: Text('Ou'),
-                      ),
-                      Expanded(child: Divider()),
-                    ],
-                  ),
-                ),
-                Column(
-                  spacing: 8,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Email'),
-                    TextFormField(
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        hintText: 'Digite seu email',
-                        prefixIcon: Icon(Icons.email_outlined),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 12,
+                        children: [
+                          Icon(
+                            Icons.g_mobiledata,
+                            size: 28,
+                          ),
+                          Text(
+                            'Entre com o google',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Opacity(
+                            opacity: 0,
+                            child: Icon(
+                              Icons.g_mobiledata,
+                              size: 28,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Column(
-                  spacing: 8,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Row(
+                        children: [
+                          Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 30),
+                            child: Text('Ou'),
+                          ),
+                          Expanded(child: Divider()),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      spacing: 8,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Senha'),
-                        Text(
-                          'Esqueceu a senha?',
-                          style: TextStyle(color: colorScheme.primary),
+                        Text('Email'),
+                        TextFormField(
+                          controller: emailCtrl,
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(
+                            hintText: 'Digite seu email',
+                            prefixIcon: Icon(Icons.email_outlined),
+                          ),
+                          validator: (value) => combine([
+                            () => isNotEmpty(value),
+                            () => isValidEmail(value),
+                          ]),
                         ),
                       ],
                     ),
-                    TextFormField(
-                      textInputAction: TextInputAction.send,
-                      decoration: InputDecoration(
-                        hintText: 'Digite sua senha',
-                        prefixIcon: Icon(Icons.lock_outline),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Column(
+                      spacing: 8,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Senha'),
+                            Text(
+                              'Esqueceu a senha?',
+                              style: TextStyle(color: colorScheme.primary),
+                            ),
+                          ],
+                        ),
+                        TextFormField(
+                          controller: passwordCtrl,
+                          textInputAction: TextInputAction.send,
+                          decoration: InputDecoration(
+                            hintText: 'Digite sua senha',
+                            prefixIcon: Icon(Icons.lock_outline),
+                          ),
+                          validator: (value) => combine([
+                            () => isNotEmpty(value),
+                            () => isValidPassword(value),
+                          ]),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 26,
+                    ),
+                    SizedBox(
+                      height: 45,
+                      child: ElevatedButton(
+                        onPressed: _signIn,
+                        child: Text('Entrar'),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 26,
-                ),
-                SizedBox(
-                  height: 45,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text('Entrar'),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
-}
 
-class GlowLogoWidget extends StatelessWidget {
-  const GlowLogoWidget({
-    super.key,
-    required this.colorScheme,
-  });
+  void _signIn() {
+    if (!(formKey.currentState?.validate() ?? false)) return;
 
-  final ColorScheme colorScheme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: 70,
-          height: 70,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: colorScheme.primaryContainer.withValues(alpha: .2),
-          ),
-        ),
-        Container(
-          width: 45,
-          height: 45,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: colorScheme.primaryContainer,
-          ),
-        ),
-        Icon(Icons.monetization_on_outlined),
-      ],
-    );
+    final authCubit = BlocProvider.of<AuthCubit>(context);
+    authCubit.signIn(emailCtrl.text, passwordCtrl.text);
   }
 }

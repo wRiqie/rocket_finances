@@ -2,6 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+import 'package:get_it/get_it.dart';
+import 'package:rocket_finances/app/core/helpers/session_helper.dart';
+import 'package:rocket_finances/app/ui/shared/dialogs/decision_dialog.dart';
+import 'package:rocket_finances/routes/app_pages.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -11,6 +15,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final sessionHelper = GetIt.I<SessionHelper>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +40,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SettingsTile(
                   title: Text('Sair'),
                   leading: Icon(Icons.logout),
+                  onPressed: (context) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return DecisionDialog(
+                            title: 'Encerrar sessão',
+                            content:
+                                'Tem certeza que deseja encerrar sua sessão?',
+                            onConfirm: _signOut);
+                      },
+                    );
+                  },
                 ),
               ],
             ),
@@ -51,5 +69,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+  }
+
+  void _signOut() async {
+    await sessionHelper.signOut();
+
+    if (mounted) {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(AppRoutes.signIn, (route) => false);
+    }
   }
 }

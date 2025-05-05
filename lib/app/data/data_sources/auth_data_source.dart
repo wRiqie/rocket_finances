@@ -53,7 +53,9 @@ class AuthDataSourceSupaImp implements AuthDataSource {
     final user = response.user;
 
     if (user != null) {
-      await _client.from('users').insert(command.toMap());
+      await _client
+          .from('users')
+          .insert(command.toMap()..addAll({'auth_id': user.id}));
 
       return UserModel(name: command.name, email: command.email);
     }

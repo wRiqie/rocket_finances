@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:rocket_finances/app/data/models/user_model.dart';
 
 class LoggedAppBarWidget extends StatelessWidget {
+  final UserModel? user;
   final VoidCallback? onTapNotifications;
   final VoidCallback? onTapSettings;
   const LoggedAppBarWidget(
-      {super.key, this.onTapNotifications, this.onTapSettings});
+      {super.key, this.user, this.onTapNotifications, this.onTapSettings});
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +27,14 @@ class LoggedAppBarWidget extends StatelessWidget {
                         spacing: 10,
                         children: [
                           CircleAvatar(
-                            child: Text('H'),
+                            child: Text((user?.name ?? 'U')[0]),
                           ),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Olá Henrique',
+                                  'Olá ${user?.name ?? '...'}',
                                   maxLines: 1,
                                   overflow: TextOverflow.fade,
                                   softWrap: false,

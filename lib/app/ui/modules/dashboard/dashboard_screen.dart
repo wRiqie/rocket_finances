@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:rocket_finances/app/core/helpers/session_helper.dart';
 import 'package:rocket_finances/app/ui/modules/home/home.dart';
 import 'package:rocket_finances/app/ui/shared/widgets/logged_app_bar_widget.dart';
 import 'package:rocket_finances/routes/app_pages.dart';
@@ -11,6 +13,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final sessionHelper = GetIt.I<SessionHelper>();
+
   final List<Widget> screens = [Home(), Container(), Container()];
 
   int currentIndex = 0;
@@ -23,6 +27,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: PreferredSize(
         preferredSize: Size(size.width, 70),
         child: LoggedAppBarWidget(
+          user: sessionHelper.currentUser,
           onTapNotifications: () {},
           onTapSettings: () => Navigator.pushNamed(context, AppRoutes.settings),
         ),

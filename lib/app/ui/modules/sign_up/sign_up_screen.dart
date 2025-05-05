@@ -7,7 +7,7 @@ import 'package:rocket_finances/app/core/helpers/session_helper.dart';
 import 'package:rocket_finances/app/core/mixins/validators_mixin.dart';
 import 'package:rocket_finances/app/core/values/snackbars.dart';
 import 'package:rocket_finances/app/data/models/commands/sign_up_command.dart';
-import 'package:rocket_finances/app/ui/modules/sign_in/sign_in_screen.dart';
+import 'package:rocket_finances/app/ui/shared/widgets/glow_logo_widget.dart';
 import 'package:rocket_finances/routes/app_pages.dart';
 
 class SignUpScreen extends StatefulWidget {
