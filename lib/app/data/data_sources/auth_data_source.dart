@@ -1,3 +1,4 @@
+import 'package:rocket_finances/app/core/values/tables.dart';
 import 'package:rocket_finances/app/data/models/commands/sign_up_command.dart';
 import 'package:rocket_finances/app/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,7 +27,7 @@ class AuthDataSourceSupaImp implements AuthDataSource {
 
     if (response.user != null) {
       final userResponse = await _client
-          .from('users')
+          .from(Tables.users)
           .select('id, auth_id, name, photo_url')
           .filter('auth_id', 'eq', response.user!.id);
 
@@ -54,7 +55,7 @@ class AuthDataSourceSupaImp implements AuthDataSource {
 
     if (user != null) {
       await _client
-          .from('users')
+          .from(Tables.users)
           .insert(command.toMap()..addAll({'auth_id': user.id}));
 
       return UserModel(name: command.name, email: command.email);
@@ -68,7 +69,7 @@ class AuthDataSourceSupaImp implements AuthDataSource {
 
     if (user != null) {
       final response = await _client
-          .from('users')
+          .from(Tables.users)
           .select('id, auth_id, name, photo_url')
           .filter('auth_id', 'eq', user.id);
 

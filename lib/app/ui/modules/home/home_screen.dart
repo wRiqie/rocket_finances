@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rocket_finances/app/ui/modules/home/widgets/bills_widget.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/spend_bar_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -73,30 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'A pagar',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onSurface.withValues(alpha: .45)),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: Text('Ver tudo'),
-                    ),
-                  ],
-                ),
-                Column(
-                  spacing: 12,
-                  children: [
-                    BillTileWidget(),
-                    BillTileWidget(),
-                    BillTileWidget(),
-                  ],
-                ),
+                BillsWidget(),
                 SizedBox(
                   height: 20,
                 ),
@@ -119,9 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Column(
                   spacing: 12,
                   children: [
-                    BillTileWidget(),
-                    BillTileWidget(),
-                    BillTileWidget(),
+                    Text('ainda sem recebimentos'),
                   ],
                 ),
                 SizedBox(
@@ -131,50 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class BillTileWidget extends StatelessWidget {
-  const BillTileWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final containerColor = colorScheme.surfaceBright.withValues(alpha: .15);
-
-    return ListTile(
-      tileColor: containerColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: colorScheme.surfaceContainer),
-      ),
-      contentPadding: EdgeInsets.symmetric(horizontal: 12),
-      leading: CircleAvatar(
-        child: Icon(Icons.home_outlined),
-      ),
-      title: Text('Água'),
-      subtitle: Text('Contas da casa'),
-      trailing: Column(
-        // spacing: ,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'R\$ 79,90',
-            style: TextStyle(
-              fontSize: 14,
-            ),
-          ),
-          Text(
-            'Pagar',
-            style: TextStyle(
-              fontSize: 14,
-              color: colorScheme.primaryFixedDim,
-            ),
-          ),
-        ],
       ),
     );
   }

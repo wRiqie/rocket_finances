@@ -1,7 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:rocket_finances/app/core/helpers/session_helper.dart';
 import 'package:rocket_finances/app/data/data_sources/auth_data_source.dart';
+import 'package:rocket_finances/app/data/data_sources/bills_data_source.dart';
 import 'package:rocket_finances/app/data/repositories/auth_repository.dart';
+import 'package:rocket_finances/app/data/repositories/bills_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 sealed class Inject {
@@ -14,10 +16,14 @@ sealed class Inject {
     // datasources
     getIt.registerLazySingleton<AuthDataSource>(
         () => AuthDataSourceSupaImp(getIt()));
+    getIt.registerLazySingleton<BillsDataSource>(
+        () => BillsDataSourceSupaImp(getIt()));
 
     // repositories
     getIt.registerLazySingleton<AuthRepository>(
         () => AuthRepositoryImp(getIt()));
+    getIt.registerLazySingleton<BillsRepository>(
+        () => BillsRepositoryImp(getIt()));
 
     // helpers
     getIt.registerLazySingleton<SessionHelper>(() => SessionHelper(getIt()));

@@ -26,6 +26,8 @@ class _SignUpScreenState extends State<SignUpScreen> with ValidatorsMixin {
   final emailCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
 
+  final isObscure = ValueNotifier(true);
+
   @override
   void dispose() {
     nameCtrl.dispose();
@@ -183,18 +185,31 @@ class _SignUpScreenState extends State<SignUpScreen> with ValidatorsMixin {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Senha'),
-                            TextFormField(
-                              controller: passwordCtrl,
-                              textInputAction: TextInputAction.send,
-                              decoration: InputDecoration(
-                                hintText: 'Digite sua senha',
-                                prefixIcon: Icon(Icons.lock_outline),
-                              ),
-                              validator: (value) => combine([
-                                () => isNotEmpty(value),
-                                () => isValidPassword(value),
-                              ]),
-                            ),
+                            ValueListenableBuilder(
+                                valueListenable: isObscure,
+                                builder: (context, value, child) {
+                                  return TextFormField(
+                                    controller: passwordCtrl,
+                                    textInputAction: TextInputAction.send,
+                                    decoration: InputDecoration(
+                                      hintText: 'Digite sua senha',
+                                      prefixIcon: Icon(Icons.lock_outline),
+                                      suffixIcon: IconButton(
+                                        onPressed: _togglePasswordObscure,
+                                        icon: Icon(
+                                          value
+                                              ? Icons.visibility_outlined
+                                              : Icons.visibility_off_outlined,
+                                        ),
+                                      ),
+                                    ),
+                                    obscureText: value,
+                                    validator: (value) => combine([
+                                      () => isNotEmpty(value),
+                                      () => isValidPassword(value),
+                                    ]),
+                                  );
+                                }),
                           ],
                         ),
                         SizedBox(
@@ -242,5 +257,11 @@ class _SignUpScreenState extends State<SignUpScreen> with ValidatorsMixin {
 
     final authCubit = BlocProvider.of<AuthCubit>(context);
     authCubit.signUp(command);
+  }
+
+  void _togglePasswordObscure() {
+    setState(() {
+      isObscure.value = !isObscure.value;
+    });
   }
 }

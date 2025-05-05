@@ -66,7 +66,7 @@ class AppHelpers {
   }
 
   /// Formata o [number] para moeda
-  static String formatCurrency(num? number, String currencyLocale) {
+  static String formatCurrency(num? number, {String currencyLocale = 'pt_BR'}) {
     if (number == null) return '';
     // Define uma expressão regular para encontrar espaços duros (&nbsp;).
     RegExp regexErrorSpace = RegExp(r'\u00a0');
