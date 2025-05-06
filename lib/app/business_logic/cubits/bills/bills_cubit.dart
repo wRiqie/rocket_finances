@@ -7,10 +7,10 @@ class BillsCubit extends Cubit<BillsState> {
 
   BillsCubit(this._billsRepository) : super(BillsState());
 
-  void getAll() async {
+  void getAllByUserId(String id) async {
     emit(state.copyWith(status: BillsStatus.loading));
 
-    final response = await _billsRepository.getAllBills();
+    final response = await _billsRepository.getAllBills(id);
 
     if (response.isSuccess) {
       emit(state.copyWith(

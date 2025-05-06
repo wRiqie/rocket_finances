@@ -1,3 +1,4 @@
+import 'package:rocket_finances/app/core/values/functions.dart';
 import 'package:rocket_finances/app/core/values/tables.dart';
 import 'package:rocket_finances/app/data/models/commands/sign_up_command.dart';
 import 'package:rocket_finances/app/data/models/user_model.dart';
@@ -25,21 +26,14 @@ class AuthDataSourceSupaImp implements AuthDataSource {
       email: email,
     );
 
-    if (response.user != null) {
-      final userResponse = await _client
-          .from(Tables.users)
-          .select('id, auth_id, name, photo_url')
-          .filter('auth_id', 'eq', response.user!.id);
+    final user = response.user;
+    if (user != null) {
+      final response =
+          await _client.rpc(Functions.getUserData, params: {'usr_id': user.id});
 
-      if (userResponse.isNotEmpty) {
-        final dbUser = userResponse.first;
-        final user = UserModel(
-          name: dbUser['name'],
-          email: email,
-          photoUrl: dbUser['photo_url'],
-        );
-
-        return user;
+      if (response.isNotEmpty) {
+        final dbUser = response.first;
+        return UserModel.fromMap(dbUser..addAll({'email': user.email}));
       }
     }
 
@@ -54,11 +48,13 @@ class AuthDataSourceSupaImp implements AuthDataSource {
     final user = response.user;
 
     if (user != null) {
-      await _client
+      final idResponse = await _client
           .from(Tables.users)
-          .insert(command.toMap()..addAll({'auth_id': user.id}));
+          .insert(command.toMap()..addAll({'auth_id': user.id}))
+          .select('id');
 
-      return UserModel(name: command.name, email: command.email);
+      return UserModel(
+          id: idResponse.first['id'], name: command.name, email: command.email);
     }
     return null;
   }
@@ -68,18 +64,12 @@ class AuthDataSourceSupaImp implements AuthDataSource {
     final user = _client.auth.currentUser;
 
     if (user != null) {
-      final response = await _client
-          .from(Tables.users)
-          .select('id, auth_id, name, photo_url')
-          .filter('auth_id', 'eq', user.id);
+      final response =
+          await _client.rpc(Functions.getUserData, params: {'usr_id': user.id});
 
       if (response.isNotEmpty) {
         final dbUser = response.first;
-        return UserModel(
-          name: dbUser['name'],
-          email: user.email ?? '',
-          photoUrl: dbUser['photo_url'],
-        );
+        return UserModel.fromMap(dbUser..addAll({'email': user.email}));
       }
     }
     return null;

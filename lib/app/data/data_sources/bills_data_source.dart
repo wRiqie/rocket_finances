@@ -3,7 +3,7 @@ import 'package:rocket_finances/app/data/models/bill_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class BillsDataSource {
-  Future<List<BillModel>> getAllBills();
+  Future<List<BillModel>> getAllBillsByUserId(String id);
 }
 
 class BillsDataSourceSupaImp implements BillsDataSource {
@@ -12,18 +12,12 @@ class BillsDataSourceSupaImp implements BillsDataSource {
   BillsDataSourceSupaImp(this._client);
 
   @override
-  Future<List<BillModel>> getAllBills() async {
-    final user = _client.auth.currentUser;
+  Future<List<BillModel>> getAllBillsByUserId(String id) async {
+    final response = await _client
+        .rpc(Functions.getUserBills, params: {'usr_id': id}).select();
 
-    if (user != null) {
-      final response = await _client
-          .rpc(Functions.getUserBills, params: {'user_id': user.id}).select();
-
-      return response.isNotEmpty
-          ? response.map((e) => BillModel.fromMap(e)).toList()
-          : [];
-    }
-
-    return [];
+    return response.isNotEmpty
+        ? response.map((e) => BillModel.fromMap(e)).toList()
+        : [];
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rocket_finances/app/core/helpers/app_helpers.dart';
 import 'package:rocket_finances/app/data/models/user_model.dart';
 
 class LoggedAppBarWidget extends StatelessWidget {
@@ -43,7 +44,8 @@ class LoggedAppBarWidget extends StatelessWidget {
                                 Row(
                                   spacing: 12,
                                   children: [
-                                    Text('R\$ 185,95'),
+                                    Text(AppHelpers.formatCurrency(
+                                        user?.remainingBudget)),
                                     Icon(
                                       Icons.visibility_outlined,
                                       size: 16,
