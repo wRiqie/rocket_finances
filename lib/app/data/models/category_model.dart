@@ -1,9 +1,9 @@
 class CategoryModel {
   final int id;
   final String name;
-  final String iconUrl;
+  final String? iconUrl;
 
-  CategoryModel({required this.id, required this.name, required this.iconUrl});
+  CategoryModel({required this.id, required this.name, this.iconUrl});
 
   factory CategoryModel.fromMap(Map<String, dynamic> map) {
     return CategoryModel(

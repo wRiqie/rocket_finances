@@ -2,9 +2,11 @@ import 'package:get_it/get_it.dart';
 import 'package:rocket_finances/app/core/helpers/session_helper.dart';
 import 'package:rocket_finances/app/data/data_sources/auth_data_source.dart';
 import 'package:rocket_finances/app/data/data_sources/bills_data_source.dart';
+import 'package:rocket_finances/app/data/data_sources/category_data_source.dart';
 import 'package:rocket_finances/app/data/data_sources/receipts_data_source.dart';
 import 'package:rocket_finances/app/data/repositories/auth_repository.dart';
 import 'package:rocket_finances/app/data/repositories/bills_repository.dart';
+import 'package:rocket_finances/app/data/repositories/category_repository.dart';
 import 'package:rocket_finances/app/data/repositories/receipts_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -22,6 +24,8 @@ sealed class Inject {
         () => BillsDataSourceSupaImp(getIt()));
     getIt.registerLazySingleton<ReceiptsDataSource>(
         () => ReceiptsDataSourceSupaImp(getIt()));
+    getIt.registerLazySingleton<CategoryDataSource>(
+        () => CategoryDataSourceSupaImp(getIt()));
 
     // repositories
     getIt.registerLazySingleton<AuthRepository>(
@@ -30,6 +34,8 @@ sealed class Inject {
         () => BillsRepositoryImp(getIt()));
     getIt.registerLazySingleton<ReceiptsRepository>(
         () => ReceiptsRepositoryImp(getIt()));
+    getIt.registerLazySingleton<CategoryRepository>(
+        () => CategoryRepositoryImp(getIt()));
 
     // helpers
     getIt.registerLazySingleton<SessionHelper>(() => SessionHelper(getIt()));

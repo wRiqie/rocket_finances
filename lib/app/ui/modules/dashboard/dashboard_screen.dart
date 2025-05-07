@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get_it/get_it.dart';
+import 'package:rocket_finances/app/business_logic/cubits/bills/bills_cubit.dart';
 import 'package:rocket_finances/app/core/helpers/session_helper.dart';
 import 'package:rocket_finances/app/ui/modules/home/home.dart';
 import 'package:rocket_finances/app/ui/shared/widgets/logged_app_bar_widget.dart';
@@ -123,7 +125,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  void _addBill() {
-    Navigator.pushNamed(context, AppRoutes.addBill);
+  void _addBill() async {
+    final result = await Navigator.pushNamed(context, AppRoutes.addBill);
+
+    if (result == true) {
+      await sessionHelper.loadActualSession();
+      setState(() {});
+      if (mounted) {
+        BlocProvider.of<BillsCubit>(context)
+            .getAllByUserId(sessionHelper.currentUser?.id ?? '');
+      }
+    }
   }
 }
