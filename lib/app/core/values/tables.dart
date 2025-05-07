@@ -4,4 +4,5 @@ sealed class Tables {
   static const billsOverrides = 'bills_overrides';
   static const receipts = 'receipts';
   static const categories = 'categories';
+  static const budgets = 'budgets';
 }

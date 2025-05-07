@@ -4,7 +4,7 @@ import 'package:rocket_finances/app/data/models/default_response_model.dart';
 import 'package:rocket_finances/app/data/services/execute_service.dart';
 
 abstract class BillsRepository {
-  Future<DefaultResponseModel<List<BillModel>>> getAllBills(String id);
+  Future<DefaultResponseModel<List<BillModel>>> getAllBillsByUserId(String id);
 }
 
 class BillsRepositoryImp implements BillsRepository {
@@ -13,7 +13,7 @@ class BillsRepositoryImp implements BillsRepository {
   BillsRepositoryImp(this._billsDataSource);
 
   @override
-  Future<DefaultResponseModel<List<BillModel>>> getAllBills(String id) {
+  Future<DefaultResponseModel<List<BillModel>>> getAllBillsByUserId(String id) {
     return ExecuteService.tryExecuteAsync(
         () => _billsDataSource.getAllBillsByUserId(id));
   }

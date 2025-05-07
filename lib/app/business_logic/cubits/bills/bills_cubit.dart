@@ -10,7 +10,7 @@ class BillsCubit extends Cubit<BillsState> {
   void getAllByUserId(String id) async {
     emit(state.copyWith(status: BillsStatus.loading));
 
-    final response = await _billsRepository.getAllBills(id);
+    final response = await _billsRepository.getAllBillsByUserId(id);
 
     if (response.isSuccess) {
       emit(state.copyWith(
@@ -18,7 +18,10 @@ class BillsCubit extends Cubit<BillsState> {
         bills: response.data,
       ));
     } else {
-      emit(state.copyWith(status: BillsStatus.error));
+      emit(state.copyWith(
+        status: BillsStatus.error,
+        error: response.error,
+      ));
     }
   }
 }

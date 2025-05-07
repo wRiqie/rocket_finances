@@ -73,12 +73,15 @@ class BillTileWidget extends StatelessWidget {
                         color: colorScheme.primary,
                       ),
                     ),
-                    Text(
-                      'Restante: ${AppHelpers.formatCurrency(bill.remainingValue)}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface.withValues(alpha: .7),
+                    Visibility(
+                      visible: bill.totalPaid < bill.value,
+                      child: Text(
+                        'Restante: ${AppHelpers.formatCurrency(bill.remainingValue)}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: colorScheme.onSurface.withValues(alpha: .7),
+                        ),
                       ),
                     ),
                   ],

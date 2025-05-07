@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rocket_finances/app/business_logic/cubits/bills/bills_cubit.dart';
+import 'package:rocket_finances/app/business_logic/cubits/bills/bills_state.dart';
+import 'package:rocket_finances/app/core/helpers/app_helpers.dart';
+import 'package:rocket_finances/app/data/models/bill_model.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/bills_widget.dart';
-import 'package:rocket_finances/app/ui/modules/home/widgets/spend_bar_widget.dart';
+import 'package:rocket_finances/app/ui/modules/home/widgets/receipts_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,46 +30,63 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: containerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: colorScheme.surfaceContainer,
-                    ),
-                  ),
-                  child: Column(
-                    spacing: 12,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                BlocBuilder<BillsCubit, BillsState>(
+                  builder: (context, state) {
+                    return Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: containerColor,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: colorScheme.surfaceContainer,
+                        ),
+                      ),
+                      child: Column(
+                        spacing: 12,
                         children: [
-                          Text(
-                            'Já gastou',
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Já gastou',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                state.bills.isNotEmpty
+                                    ? AppHelpers.formatCurrency(
+                                        state.bills.totalPaid)
+                                    : '-',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            'R\$ 8395,10',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          LinearProgressIndicator(
+                            value: state.bills.isNotEmpty
+                                ? state.bills.totalPaidProportion
+                                : 0.0,
+                            minHeight: 20,
+                            color: colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(20),
+                            backgroundColor: colorScheme.surface,
                           ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                  '${state.bills.isNotEmpty ? state.bills.paidPercentage : '-'}%'),
+                              Text(
+                                  'Falta ${AppHelpers.formatCurrency(state.bills.isNotEmpty ? state.bills.remainingValue : 0)}'),
+                            ],
+                          )
                         ],
                       ),
-                      SpendBarWidget(size: size, colorScheme: colorScheme),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('84%'),
-                          Text('Falta R\$ 1432,23'),
-                        ],
-                      )
-                    ],
-                  ),
+                    );
+                  },
                 ),
                 SizedBox(height: 26),
                 Text(
@@ -78,28 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: 20,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'A receber',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onSurface.withValues(alpha: .45)),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: Text('Ver tudo'),
-                    ),
-                  ],
-                ),
-                Column(
-                  spacing: 12,
-                  children: [
-                    Text('ainda sem recebimentos'),
-                  ],
-                ),
+                ReceiptsWidget(),
                 SizedBox(
                   height: 50,
                 ),

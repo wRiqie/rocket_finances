@@ -41,6 +41,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   easy_mask: ^2.0.1
   intl: ^0.20.2
+  flutter_speed_dial: ^7.0.0
 
 dev_dependencies:
   flutter_test:

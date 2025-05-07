@@ -33,3 +33,19 @@ class BillModel {
   double get remainingValue => value - totalPaid;
   int get paidPercentage => ((totalPaid / value) * 100).round();
 }
+
+extension BillsExt on List<BillModel> {
+  double get totalPaid {
+    return map((e) => e.totalPaid).reduce((value, element) => value + element);
+  }
+
+  double get value =>
+      map((e) => e.value).reduce((value, element) => value + element);
+
+  double get remainingValue =>
+      map((e) => e.remainingValue).reduce((value, element) => value + element);
+
+  double get totalPaidProportion => totalPaid / value;
+
+  int get paidPercentage => ((totalPaid / value) * 100).round();
+}

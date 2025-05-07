@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:rocket_finances/app/data/models/bill_model.dart';
 import 'package:rocket_finances/app/data/models/error_model.dart';
 

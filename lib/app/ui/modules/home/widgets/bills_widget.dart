@@ -34,7 +34,7 @@ class _BillsWidgetState extends State<BillsWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'A pagar',
+              'Contas',
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,

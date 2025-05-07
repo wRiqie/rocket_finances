@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rocket_finances/app/ui/modules/add_bill/add_bill.dart';
 import 'package:rocket_finances/app/ui/modules/dashboard/dashboard.dart';
 import 'package:rocket_finances/app/ui/modules/home/home.dart';
 import 'package:rocket_finances/app/ui/modules/settings/settings.dart';
@@ -16,5 +17,6 @@ class AppPages {
     AppRoutes.dashboard: (context) => Dashboard(),
     AppRoutes.home: (context) => Home(),
     AppRoutes.settings: (context) => Settings(),
+    AppRoutes.addBill: (context) => AddBill(),
   };
 }
