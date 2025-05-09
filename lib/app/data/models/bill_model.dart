@@ -1,6 +1,7 @@
 class BillModel {
   final int id;
   final String name;
+  final int categoryId;
   final String? categoryLogoUrl;
   final String categoryName;
   final double value;
@@ -10,6 +11,7 @@ class BillModel {
   BillModel({
     required this.id,
     required this.name,
+    required this.categoryId,
     required this.categoryLogoUrl,
     required this.categoryName,
     required this.value,
@@ -21,6 +23,7 @@ class BillModel {
     return BillModel(
       id: map['id'],
       name: map['name'],
+      categoryId: map['category_id'],
       categoryLogoUrl: map['category_icon_url'],
       categoryName: map['category_name'],
       value: map['value'] * 1.0,
@@ -32,6 +35,7 @@ class BillModel {
   double get totalPaidProportion => totalPaid > 0 ? totalPaid / value : 0;
   double get remainingValue => value - totalPaid;
   int get paidPercentage => ((totalPaid / value) * 100).round();
+  bool get isPaid => totalPaid >= value;
 }
 
 extension BillsExt on List<BillModel> {

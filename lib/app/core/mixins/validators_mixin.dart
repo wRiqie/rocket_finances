@@ -55,6 +55,15 @@ mixin ValidatorsMixin {
     return null;
   }
 
+  String? isLessThanOrEqualTo(String? value, double maxValue,
+      [String? message]) {
+    if (AppHelpers.revertCurrency(value ?? '') > maxValue) {
+      return message ??
+          'O valor não pode ser maior que ${AppHelpers.formatCurrency(maxValue)}';
+    }
+    return null;
+  }
+
   String? combine(List<String? Function()> validators) {
     for (var validator in validators) {
       final result = validator();

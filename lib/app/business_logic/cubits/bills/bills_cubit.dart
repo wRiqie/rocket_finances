@@ -63,7 +63,7 @@ class BillsCubit extends Cubit<BillsState> {
     final response = await _billsRepository.deleteBillById(id, isRecurring);
 
     if (response.isSuccess) {
-      emit(state.copyWith(status: BillsStatus.success));
+      emit(state.copyWith(status: BillsStatus.deleted));
     } else {
       emit(state.copyWith(
         status: BillsStatus.error,
@@ -78,7 +78,22 @@ class BillsCubit extends Cubit<BillsState> {
     final response = await _billsRepository.deleteBillMonthById(id);
 
     if (response.isSuccess) {
-      emit(state.copyWith(status: BillsStatus.success));
+      emit(state.copyWith(status: BillsStatus.deleted));
+    } else {
+      emit(state.copyWith(
+        status: BillsStatus.error,
+        error: response.error,
+      ));
+    }
+  }
+
+  void payBill(int id, double value) async {
+    emit(state.copyWith(status: BillsStatus.loading));
+
+    final response = await _billsRepository.payBillById(id, value);
+
+    if (response.isSuccess) {
+      emit(state.copyWith(status: BillsStatus.paid));
     } else {
       emit(state.copyWith(
         status: BillsStatus.error,

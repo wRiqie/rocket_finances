@@ -62,7 +62,15 @@ class _ReceiptsWidgetState extends State<ReceiptsWidget> {
                 );
               } else {
                 // TODO empty
-                return Text('ainda sem recebimentos');
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Ainda sem recebimentos :('),
+                    ],
+                  ),
+                );
               }
             }
             // TODO error

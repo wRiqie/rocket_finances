@@ -15,6 +15,8 @@ abstract class BillsRepository {
   Future<DefaultResponseModel<void>> deleteBillById(int id, bool isRecurring);
 
   Future<DefaultResponseModel<void>> deleteBillMonthById(int id);
+
+  Future<DefaultResponseModel<void>> payBillById(int id, double value);
 }
 
 class BillsRepositoryImp implements BillsRepository {
@@ -50,5 +52,11 @@ class BillsRepositoryImp implements BillsRepository {
   Future<DefaultResponseModel<void>> updateBill(BillUpdateCommand command) {
     return ExecuteService.tryExecuteAsync(
         () => _billsDataSource.updateBill(command));
+  }
+
+  @override
+  Future<DefaultResponseModel<void>> payBillById(int id, double value) {
+    return ExecuteService.tryExecuteAsync(
+        () => _billsDataSource.payBillById(id, value));
   }
 }

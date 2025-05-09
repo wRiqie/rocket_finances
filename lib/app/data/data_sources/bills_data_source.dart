@@ -15,6 +15,8 @@ abstract class BillsDataSource {
   Future<void> deleteBillById(int id, bool isRecurring);
 
   Future<void> deleteBillMonthById(int id);
+
+  Future<void> payBillById(int id, double value);
 }
 
 class BillsDataSourceSupaImp implements BillsDataSource {
@@ -45,8 +47,8 @@ class BillsDataSourceSupaImp implements BillsDataSource {
       final response = await _client
           .rpc(Functions.checkBillOverride, params: {'bil_id': command.id});
 
-      if (response.isNotEmpty) {
-        final id = response.first[Functions.checkBillOverride];
+      if (response is int) {
+        final id = response;
 
         await _client
             .from(Tables.billsOverrides)
@@ -82,10 +84,11 @@ class BillsDataSourceSupaImp implements BillsDataSource {
 
   @override
   Future<void> deleteBillMonthById(int id) async {
-    final response = await _client.rpc(Functions.checkBillOverride);
+    final response =
+        await _client.rpc(Functions.checkBillOverride, params: {'bil_id': id});
 
-    if (response.isNotEmpty) {
-      final overrideId = response[Functions.checkBillOverride];
+    if (response is int) {
+      final overrideId = response;
 
       await _client
           .from(Tables.billsOverrides)
@@ -95,5 +98,12 @@ class BillsDataSourceSupaImp implements BillsDataSource {
           .from(Tables.billsOverrides)
           .insert({'bill_id': id, 'is_excluded': true});
     }
+  }
+
+  @override
+  Future<void> payBillById(int id, double value) async {
+    await _client
+        .from(Tables.billPayments)
+        .insert({'value': value, 'bill_id': id});
   }
 }

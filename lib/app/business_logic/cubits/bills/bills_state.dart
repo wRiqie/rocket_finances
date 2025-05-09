@@ -5,10 +5,14 @@ enum BillsStatus {
   idle,
   loading,
   success,
+  deleted,
+  paid,
   error;
 
   bool get isLoading => this == BillsStatus.loading;
   bool get isSuccess => this == BillsStatus.success;
+  bool get isDeleted => this == BillsStatus.deleted;
+  bool get isPaid => this == BillsStatus.paid;
   bool get isError => this == BillsStatus.error;
 }
 
