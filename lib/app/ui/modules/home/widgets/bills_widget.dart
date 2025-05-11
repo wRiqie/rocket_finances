@@ -9,12 +9,23 @@ import 'package:rocket_finances/app/core/helpers/session_helper.dart';
 import 'package:rocket_finances/app/core/values/snackbars.dart';
 import 'package:rocket_finances/app/data/enum/delete_recurring_enum.dart';
 import 'package:rocket_finances/app/data/models/args/add_bill_args.dart';
+import 'package:rocket_finances/app/data/models/bill_model.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/bill_options_bottom_widget.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/bill_pay_bottom_widget.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/bill_recurring_bottom_widget.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/bill_tile_widget.dart';
 import 'package:rocket_finances/app/ui/shared/dialogs/decision_dialog.dart';
 import 'package:rocket_finances/routes/app_pages.dart';
+
+class BillGroupModel {
+  final String title;
+  final List<BillModel> bills;
+
+  BillGroupModel({
+    required this.title,
+    required this.bills,
+  });
+}
 
 class BillsWidget extends StatefulWidget {
   const BillsWidget({super.key});
@@ -25,6 +36,9 @@ class BillsWidget extends StatefulWidget {
 
 class _BillsWidgetState extends State<BillsWidget> {
   final sessionHelper = GetIt.I<SessionHelper>();
+
+  Set<String> categories = {};
+  List<BillGroupModel> billGroups = [];
 
   @override
   void initState() {
@@ -50,25 +64,6 @@ class _BillsWidgetState extends State<BillsWidget> {
       },
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Contas',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.onSurface.withValues(alpha: .45)),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final result =
-                      await Navigator.pushNamed(context, AppRoutes.bills);
-                },
-                child: Text('Ver tudo'),
-              ),
-            ],
-          ),
           BlocBuilder<BillsCubit, BillsState>(
             builder: (context, state) {
               if (state.status.isLoading) {
@@ -98,64 +93,114 @@ class _BillsWidgetState extends State<BillsWidget> {
                   );
                 }
 
+                categories.clear();
+                billGroups.clear();
+                categories = state.bills.map((e) => e.categoryName).toSet();
+
+                for (var category in categories) {
+                  billGroups.add(BillGroupModel(
+                      title: category,
+                      bills: state.bills
+                          .where((e) => e.categoryName == category)
+                          .toList()));
+                }
+
                 return Column(
-                  spacing: 8,
-                  children: state.bills
-                      .take(3)
-                      .map((e) => BillTileWidget(
-                            bill: e,
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (_) {
-                                  return BillOptionsBottomWidget(
-                                    onEdit: () async {
-                                      final result = await Navigator.pushNamed(
-                                        context,
-                                        AppRoutes.addBill,
-                                        arguments: AddBillArgs(e),
+                  children: billGroups
+                      .map((e) => Column(
+                            children: [
+                              Row(
+                                spacing: 12,
+                                children: [
+                                  Text(
+                                    e.title,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Expanded(child: Divider()),
+                                  Text(
+                                    '${e.bills.length} item(s)',
+                                    style: TextStyle(
+                                      color: colorScheme.onSurface
+                                          .withValues(alpha: .6),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Column(
+                                spacing: 12,
+                                children: e.bills.map((e) {
+                                  return BillTileWidget(
+                                    bill: e,
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (_) {
+                                          return BillOptionsBottomWidget(
+                                            onEdit: () async {
+                                              final result =
+                                                  await Navigator.pushNamed(
+                                                context,
+                                                AppRoutes.addBill,
+                                                arguments: AddBillArgs(e),
+                                              );
+                                              if (result == true &&
+                                                  context.mounted) {
+                                                _loadBills();
+                                              }
+                                            },
+                                            onDelete: () {
+                                              if (e.isRecurring) {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      BillRecurringBottomWidget(
+                                                    onDelete: (type) =>
+                                                        _deleteRecurringBill(
+                                                            e.id, type),
+                                                  ),
+                                                );
+                                              } else {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      DecisionDialog(
+                                                    title: 'Deletar conta?',
+                                                    content:
+                                                        'Tem certeza que deseja deletar a conta?',
+                                                    onConfirm: () =>
+                                                        _deleteBill(e.id),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          );
+                                        },
                                       );
-                                      if (result == true && context.mounted) {
-                                        _loadBills();
-                                      }
                                     },
-                                    onDelete: () {
-                                      if (e.isRecurring) {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          builder: (context) =>
-                                              BillRecurringBottomWidget(
-                                            onDelete: (type) =>
-                                                _deleteRecurringBill(
-                                                    e.id, type),
-                                          ),
-                                        );
-                                      } else {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) => DecisionDialog(
-                                            title: 'Deletar conta?',
-                                            content:
-                                                'Tem certeza que deseja deletar a conta?',
-                                            onConfirm: () => _deleteBill(e.id),
-                                          ),
-                                        );
-                                      }
+                                    onTapPay: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        builder: (_) => BlocProvider.value(
+                                          value: BlocProvider.of<BillsCubit>(
+                                              context),
+                                          child: BillPayBottomWidget(bill: e),
+                                        ),
+                                      );
                                     },
                                   );
-                                },
-                              );
-                            },
-                            onTapPay: () {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (_) => BlocProvider.value(
-                                  value: BlocProvider.of<BillsCubit>(context),
-                                  child: BillPayBottomWidget(bill: e),
-                                ),
-                              );
-                            },
+                                }).toList(),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                            ],
                           ))
                       .toList(),
                 );

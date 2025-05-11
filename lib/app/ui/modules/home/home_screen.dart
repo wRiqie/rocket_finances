@@ -7,6 +7,14 @@ import 'package:rocket_finances/app/data/models/bill_model.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/bills_widget.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/receipts_widget.dart';
 
+enum HomeTabEnum {
+  bills,
+  receipts;
+
+  bool get isBills => this == HomeTabEnum.bills;
+  bool get isReceipts => this == HomeTabEnum.receipts;
+}
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -15,9 +23,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  HomeTabEnum selectedTab = HomeTabEnum.bills;
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     final containerColor = colorScheme.surfaceBright.withValues(alpha: .15);
@@ -96,19 +105,66 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                BillsWidget(),
+                SizedBox(
+                  height: 12,
+                ),
+                Container(
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: containerColor,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: colorScheme.surfaceContainer,
+                    ),
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Row(
+                        children: [
+                          _buildTabButton('Contas', HomeTabEnum.bills),
+                          _buildTabButton('Recebimentos', HomeTabEnum.receipts),
+                        ],
+                      );
+                    },
+                  ),
+                ),
                 SizedBox(
                   height: 20,
                 ),
-                ReceiptsWidget(),
-                SizedBox(
-                  height: 50,
-                ),
+                selectedTab.isBills ? BillsWidget() : ReceiptsWidget()
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildTabButton(String text, HomeTabEnum tab) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isSelected = selectedTab == tab;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _toggleTab(tab),
+        child: Container(
+          height: 40,
+          decoration: BoxDecoration(
+            color: isSelected ? colorScheme.surfaceBright : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isSelected ? colorScheme.surface : Colors.transparent,
+            ),
+          ),
+          child: Center(child: Text(text)),
+        ),
+      ),
+    );
+  }
+
+  void _toggleTab(HomeTabEnum tab) {
+    setState(() {
+      selectedTab = tab;
+    });
   }
 }

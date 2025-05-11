@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rocket_finances/app/ui/modules/add_bill/add_bill.dart';
-import 'package:rocket_finances/app/ui/modules/bills/bills.dart';
+import 'package:rocket_finances/app/ui/modules/add_receipt/add_receipt.dart';
 import 'package:rocket_finances/app/ui/modules/dashboard/dashboard.dart';
 import 'package:rocket_finances/app/ui/modules/home/home.dart';
 import 'package:rocket_finances/app/ui/modules/select_category/select_category.dart';
@@ -20,7 +20,7 @@ class AppPages {
     AppRoutes.home: (context) => Home(),
     AppRoutes.settings: (context) => Settings(),
     AppRoutes.addBill: (context) => AddBill(),
+    AppRoutes.addReceipt: (context) => AddReceipt(),
     AppRoutes.selectCategory: (context) => SelectCategory(),
-    AppRoutes.bills: (context) => Bills(),
   };
 }

@@ -11,8 +11,11 @@ class AppWidget extends StatelessWidget {
     return MaterialApp(
       title: 'Rocket finances',
       theme: ThemeData(brightness: Brightness.dark).copyWith(
-          inputDecorationTheme:
-              InputDecorationTheme(border: OutlineInputBorder())),
+        appBarTheme: AppBarTheme(centerTitle: true),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(),
+        ),
+      ),
       initialRoute: GetIt.I<SessionHelper>().isSignedIn
           ? AppRoutes.dashboard
           : AppRoutes.signIn,

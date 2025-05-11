@@ -27,27 +27,9 @@ class _ReceiptsWidgetState extends State<ReceiptsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Recebimentos',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: colorScheme.onSurface.withValues(alpha: .45)),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text('Ver tudo'),
-            ),
-          ],
-        ),
         BlocBuilder<ReceiptsCubit, ReceiptsState>(
           builder: (context, state) {
             if (state.status.isLoading) {

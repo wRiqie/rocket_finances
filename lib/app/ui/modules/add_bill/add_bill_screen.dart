@@ -119,6 +119,7 @@ class _AddBillScreenState extends State<AddBillScreen> with ValidatorsMixin {
                             decoration: InputDecoration(
                               hintText: 'Digite o nome',
                             ),
+                            keyboardType: TextInputType.number,
                             validator: isNotEmpty,
                           ),
                         ],

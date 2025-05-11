@@ -16,7 +16,7 @@ class LoggedAppBarWidget extends StatelessWidget {
         Container(
           decoration: BoxDecoration(),
           padding: EdgeInsets.fromLTRB(
-              18, MediaQuery.viewPaddingOf(context).top, 18, 4),
+              18, 18 + MediaQuery.viewPaddingOf(context).top, 18, 4),
           child: Column(
             children: [
               Center(
@@ -39,7 +39,9 @@ class LoggedAppBarWidget extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.fade,
                                   softWrap: false,
-                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16),
                                 ),
                                 Row(
                                   spacing: 12,

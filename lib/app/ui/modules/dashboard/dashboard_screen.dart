@@ -4,6 +4,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rocket_finances/app/business_logic/cubits/bills/bills_cubit.dart';
 import 'package:rocket_finances/app/business_logic/cubits/bills/bills_state.dart';
+import 'package:rocket_finances/app/business_logic/cubits/receipts/receipts_cubit.dart';
 import 'package:rocket_finances/app/core/helpers/session_helper.dart';
 import 'package:rocket_finances/app/ui/modules/analytics/ai_analytics.dart';
 import 'package:rocket_finances/app/ui/modules/home/home.dart';
@@ -52,7 +53,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       },
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size(size.width, 70),
+          preferredSize: Size(size.width, 90),
           child: LoggedAppBarWidget(
             user: sessionHelper.currentUser,
             onTapNotifications: () {},
@@ -84,7 +85,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               label: 'Recebimento',
               labelStyle: TextStyle(fontSize: 16, color: Colors.white),
               labelBackgroundColor: const Color.fromARGB(82, 76, 175, 79),
-              onTap: () {},
+              onTap: _addReceipt,
             ),
             SpeedDialChild(
               child: Icon(Icons.arrow_upward, color: Colors.white),
@@ -148,6 +149,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
       setState(() {});
       if (mounted) {
         BlocProvider.of<BillsCubit>(context)
+            .getAllByUserId(sessionHelper.currentUser?.id ?? '');
+      }
+    }
+  }
+
+  void _addReceipt() async {
+    final result = await Navigator.pushNamed(context, AppRoutes.addReceipt);
+
+    if (result == true) {
+      if (mounted) {
+        BlocProvider.of<ReceiptsCubit>(context)
             .getAllByUserId(sessionHelper.currentUser?.id ?? '');
       }
     }
