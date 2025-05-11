@@ -43,54 +43,57 @@ class _AiAnalyticsScreenState extends State<AiAnalyticsScreen>
     final colorScheme = Theme.of(context).colorScheme;
 
     return Center(
-      child: Column(
-        spacing: 24,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Lottie.asset(Animations.ai,
-              width: 150, repeat: false, controller: animationController),
-          AnimatedBuilder(
-              animation: animationController,
-              builder: (context, child) {
-                return Transform.translate(
-                  offset: Offset(0, positionAnim.value),
-                  child: Opacity(
-                    opacity: fadeInAnim.value,
-                    child: Column(
-                      spacing: 10,
-                      children: [
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primaryContainer
-                                .withValues(alpha: .4),
-                            borderRadius: BorderRadius.circular(4),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 22),
+        child: Column(
+          spacing: 24,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Lottie.asset(Animations.ai,
+                width: 150, repeat: false, controller: animationController),
+            AnimatedBuilder(
+                animation: animationController,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: Offset(0, positionAnim.value),
+                    child: Opacity(
+                      opacity: fadeInAnim.value,
+                      child: Column(
+                        spacing: 10,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primaryContainer
+                                  .withValues(alpha: .4),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'Análise de IA',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.primary,
+                                  fontSize: 18),
+                            ),
                           ),
-                          child: Text(
-                            'Análise de IA',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.primary,
-                                fontSize: 18),
+                          Text(
+                            'Hora de impulsionar ainda mais suas finanças e alcançar seus objetivos',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 16),
                           ),
-                        ),
-                        Text(
-                          'Hora de impulsionar ainda mais suas finanças e alcançar seus objetivos',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: null,
-                          label: Text('Use o app por 3 meses'),
-                          icon: Icon(Icons.lock),
-                        ),
-                      ],
+                          ElevatedButton.icon(
+                            onPressed: null,
+                            label: Text('Use o app por 3 meses'),
+                            icon: Icon(Icons.lock),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              })
-        ],
+                  );
+                })
+          ],
+        ),
       ),
     );
   }

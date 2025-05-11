@@ -10,4 +10,5 @@ class AppRoutes {
   static const settings = '/settings';
   static const addBill = '/add-bill';
   static const selectCategory = '/select-category';
+  static const bills = '/bills';
 }

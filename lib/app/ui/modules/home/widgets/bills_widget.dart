@@ -61,7 +61,10 @@ class _BillsWidgetState extends State<BillsWidget> {
                     color: colorScheme.onSurface.withValues(alpha: .45)),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final result =
+                      await Navigator.pushNamed(context, AppRoutes.bills);
+                },
                 child: Text('Ver tudo'),
               ),
             ],
