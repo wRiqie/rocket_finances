@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 12,
                 ),
                 Container(
-                  padding: EdgeInsets.all(6),
+                  padding: EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: containerColor,
                     borderRadius: BorderRadius.circular(8),
@@ -131,7 +131,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: 20,
                 ),
-                selectedTab.isBills ? BillsWidget() : ReceiptsWidget()
+                selectedTab.isBills ? BillsWidget() : ReceiptsWidget(),
+                SizedBox(
+                  height: 50,
+                ),
               ],
             ),
           ),

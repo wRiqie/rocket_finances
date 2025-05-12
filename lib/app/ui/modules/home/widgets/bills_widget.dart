@@ -10,10 +10,10 @@ import 'package:rocket_finances/app/core/values/snackbars.dart';
 import 'package:rocket_finances/app/data/enum/delete_recurring_enum.dart';
 import 'package:rocket_finances/app/data/models/args/add_bill_args.dart';
 import 'package:rocket_finances/app/data/models/bill_model.dart';
-import 'package:rocket_finances/app/ui/modules/home/widgets/bill_options_bottom_widget.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/bill_pay_bottom_widget.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/bill_recurring_bottom_widget.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/bill_tile_widget.dart';
+import 'package:rocket_finances/app/ui/modules/home/widgets/transaction_options_bottom_widget.dart';
 import 'package:rocket_finances/app/ui/shared/dialogs/decision_dialog.dart';
 import 'package:rocket_finances/routes/app_pages.dart';
 
@@ -141,7 +141,7 @@ class _BillsWidgetState extends State<BillsWidget> {
                                       showModalBottomSheet(
                                         context: context,
                                         builder: (_) {
-                                          return BillOptionsBottomWidget(
+                                          return TransactionOptionsBottomWidget(
                                             onEdit: () async {
                                               final result =
                                                   await Navigator.pushNamed(

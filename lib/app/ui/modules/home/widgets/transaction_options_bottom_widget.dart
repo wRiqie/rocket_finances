@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:rocket_finances/app/ui/shared/widgets/handler_widget.dart';
 
-class BillOptionsBottomWidget extends StatelessWidget {
+class TransactionOptionsBottomWidget extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
-  const BillOptionsBottomWidget({super.key, this.onEdit, this.onDelete});
+  const TransactionOptionsBottomWidget({super.key, this.onEdit, this.onDelete});
 
   @override
   Widget build(BuildContext context) {

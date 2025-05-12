@@ -1,10 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:rocket_finances/app/business_logic/cubits/receipts/receipts_cubit.dart';
 import 'package:rocket_finances/app/business_logic/cubits/receipts/receipts_state.dart';
 import 'package:rocket_finances/app/core/helpers/app_helpers.dart';
+import 'package:rocket_finances/app/core/helpers/session_helper.dart';
 import 'package:rocket_finances/app/core/mixins/validators_mixin.dart';
 import 'package:rocket_finances/app/core/values/snackbars.dart';
+import 'package:rocket_finances/app/data/models/args/add_receipt_args.dart';
+import 'package:rocket_finances/app/data/models/commands/receipt/receipt_add_command.dart';
+import 'package:rocket_finances/app/data/models/commands/receipt/receipt_update_command.dart';
+import 'package:rocket_finances/app/data/models/receipt_model.dart';
 
 class AddReceiptScreen extends StatefulWidget {
   const AddReceiptScreen({super.key});
@@ -15,10 +23,32 @@ class AddReceiptScreen extends StatefulWidget {
 
 class _AddReceiptScreenState extends State<AddReceiptScreen>
     with ValidatorsMixin {
+  final sessionHelper = GetIt.I<SessionHelper>();
+
   final formKey = GlobalKey<FormState>();
 
   final nameCtrl = TextEditingController();
   final valueCtrl = TextEditingController();
+
+  ReceiptModel? editingReceipt;
+
+  @override
+  void initState() {
+    super.initState();
+
+    scheduleMicrotask(
+      () {
+        final args =
+            ModalRoute.of(context)?.settings.arguments as AddReceiptArgs?;
+
+        if (args != null) {
+          editingReceipt = args.editingReceipt;
+          nameCtrl.text = editingReceipt!.name;
+          valueCtrl.text = AppHelpers.formatCurrency(editingReceipt!.value);
+        }
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -100,6 +130,7 @@ class _AddReceiptScreenState extends State<AddReceiptScreen>
                               hintText: 'Digite o valor',
                             ),
                             inputFormatters: [AppHelpers.currencyFormatter()],
+                            keyboardType: TextInputType.number,
                             validator: (value) => combine([
                               () => isNotEmpty(value),
                               () => isMoreThanZero(value),
@@ -133,5 +164,23 @@ class _AddReceiptScreenState extends State<AddReceiptScreen>
 
   void _save() {
     if (!(formKey.currentState?.validate() ?? false)) return;
+
+    if (editingReceipt == null) {
+      final command = ReceiptAddCommand(
+        name: nameCtrl.text,
+        value: AppHelpers.revertCurrency(valueCtrl.text) * 1.0,
+        userId: sessionHelper.currentUser?.id ?? '',
+      );
+
+      BlocProvider.of<ReceiptsCubit>(context).addReceipt(command);
+    } else {
+      final command = ReceiptUpdateCommand(
+        id: editingReceipt!.id,
+        name: nameCtrl.text,
+        value: AppHelpers.revertCurrency(valueCtrl.text) * 1.0,
+      );
+
+      BlocProvider.of<ReceiptsCubit>(context).updateReceipt(command);
+    }
   }
 }

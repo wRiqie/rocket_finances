@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:rocket_finances/app/business_logic/cubits/bills/bills_cubit.dart';
 import 'package:rocket_finances/app/business_logic/cubits/bills/bills_state.dart';
 import 'package:rocket_finances/app/business_logic/cubits/receipts/receipts_cubit.dart';
+import 'package:rocket_finances/app/business_logic/cubits/receipts/receipts_state.dart';
 import 'package:rocket_finances/app/core/helpers/session_helper.dart';
 import 'package:rocket_finances/app/ui/modules/analytics/ai_analytics.dart';
 import 'package:rocket_finances/app/ui/modules/home/home.dart';
@@ -40,17 +41,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final size = MediaQuery.sizeOf(context);
     final colorScheme = Theme.of(context).colorScheme;
 
-    return BlocListener<BillsCubit, BillsState>(
-      listener: (context, state) async {
-        if (state.status.isDeleted) {
-          await sessionHelper.loadActualSession();
-          setState(() {});
-          if (context.mounted) {
-            BlocProvider.of<BillsCubit>(context)
-                .getAllByUserId(sessionHelper.currentUser?.id ?? '');
-          }
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<BillsCubit, BillsState>(
+          listener: (context, state) async {
+            if (state.status.isDeleted) {
+              await sessionHelper.loadActualSession();
+              setState(() {});
+              if (context.mounted) {
+                BlocProvider.of<BillsCubit>(context)
+                    .getAllByUserId(sessionHelper.currentUser?.id ?? '');
+              }
+            }
+          },
+        ),
+        BlocListener<ReceiptsCubit, ReceiptsState>(
+          listener: (context, state) async {
+            if (state.status.isDeleted) {
+              await sessionHelper.loadActualSession();
+              setState(() {});
+              if (context.mounted) {
+                BlocProvider.of<ReceiptsCubit>(context)
+                    .getAllByUserId(sessionHelper.currentUser?.id ?? '');
+              }
+            }
+          },
+        ),
+      ],
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size(size.width, 90),
@@ -158,6 +175,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final result = await Navigator.pushNamed(context, AppRoutes.addReceipt);
 
     if (result == true) {
+      await sessionHelper.loadActualSession();
+      setState(() {});
       if (mounted) {
         BlocProvider.of<ReceiptsCubit>(context)
             .getAllByUserId(sessionHelper.currentUser?.id ?? '');

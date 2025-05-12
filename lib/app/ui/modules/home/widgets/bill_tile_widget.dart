@@ -41,7 +41,11 @@ class BillTileWidget extends StatelessWidget {
               leading: CircleAvatar(
                 child: Icon(Icons.home_outlined),
               ),
-              title: Text(bill.name),
+              title: Text(
+                bill.name,
+                softWrap: false,
+                overflow: TextOverflow.fade,
+              ),
               subtitle: Text(bill.categoryName),
               trailing: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,

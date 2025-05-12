@@ -5,10 +5,12 @@ enum ReceiptsStatus {
   idle,
   loading,
   success,
+  deleted,
   error;
 
   bool get isLoading => this == ReceiptsStatus.loading;
   bool get isSuccess => this == ReceiptsStatus.success;
+  bool get isDeleted => this == ReceiptsStatus.deleted;
   bool get isError => this == ReceiptsStatus.error;
 }
 
