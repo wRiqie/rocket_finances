@@ -119,6 +119,8 @@ class _AddBillScreenState extends State<AddBillScreen> with ValidatorsMixin {
                             decoration: InputDecoration(
                               hintText: 'Digite o nome',
                             ),
+                            textInputAction: TextInputAction.next,
+                            textCapitalization: TextCapitalization.sentences,
                             validator: isNotEmpty,
                           ),
                         ],
@@ -139,6 +141,7 @@ class _AddBillScreenState extends State<AddBillScreen> with ValidatorsMixin {
                             decoration: InputDecoration(
                               hintText: 'Digite o valor',
                             ),
+                            textInputAction: TextInputAction.next,
                             keyboardType: TextInputType.number,
                             inputFormatters: [AppHelpers.currencyFormatter()],
                             validator: (value) => combine([

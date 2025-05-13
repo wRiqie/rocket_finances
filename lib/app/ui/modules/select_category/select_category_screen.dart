@@ -50,6 +50,7 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                 child: Column(
                   children: state.categories
                       .map((e) => ListTile(
+                            leading: Icon(Icons.category_outlined),
                             title: Text(e.name),
                             onTap: () {
                               Navigator.pop(context, SelectCategoryResult(e));

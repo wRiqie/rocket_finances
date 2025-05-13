@@ -204,6 +204,7 @@ class _SignUpScreenState extends State<SignUpScreen> with ValidatorsMixin {
                                       ),
                                     ),
                                     obscureText: value,
+                                    onFieldSubmitted: (value) => _signUp(),
                                     validator: (value) => combine([
                                       () => isNotEmpty(value),
                                       () => isValidPassword(value),

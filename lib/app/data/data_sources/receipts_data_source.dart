@@ -38,7 +38,10 @@ class ReceiptsDataSourceSupaImp implements ReceiptsDataSource {
 
   @override
   Future<void> updateReceipt(ReceiptUpdateCommand command) async {
-    await _client.from(Tables.receipts).update(command.toMap());
+    await _client
+        .from(Tables.receipts)
+        .update(command.toMap())
+        .eq('id', command.id);
   }
 
   @override

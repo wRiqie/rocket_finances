@@ -108,7 +108,8 @@ class _AddReceiptScreenState extends State<AddReceiptScreen>
                             decoration: InputDecoration(
                               hintText: 'Digite o nome',
                             ),
-                            keyboardType: TextInputType.number,
+                            textInputAction: TextInputAction.next,
+                            textCapitalization: TextCapitalization.sentences,
                             validator: isNotEmpty,
                           ),
                         ],
@@ -131,6 +132,7 @@ class _AddReceiptScreenState extends State<AddReceiptScreen>
                             ),
                             inputFormatters: [AppHelpers.currencyFormatter()],
                             keyboardType: TextInputType.number,
+                            onFieldSubmitted: (value) => _save(),
                             validator: (value) => combine([
                               () => isNotEmpty(value),
                               () => isMoreThanZero(value),

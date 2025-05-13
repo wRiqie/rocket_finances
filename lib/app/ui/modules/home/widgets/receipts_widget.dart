@@ -50,8 +50,7 @@ class _ReceiptsWidgetState extends State<ReceiptsWidget> {
                             onTap: () {
                               showModalBottomSheet(
                                 context: context,
-                                builder: (context) =>
-                                    TransactionOptionsBottomWidget(
+                                builder: (_) => TransactionOptionsBottomWidget(
                                   onEdit: () async {
                                     final result = await Navigator.pushNamed(
                                       context,
