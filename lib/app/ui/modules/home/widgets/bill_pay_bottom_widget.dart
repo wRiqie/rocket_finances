@@ -155,6 +155,7 @@ class _BillPayBottomWidgetState extends State<BillPayBottomWidget>
                                   filled: true,
                                   hintText: 'Digite o valor',
                                 ),
+                                keyboardType: TextInputType.number,
                                 validator: (value) => combine([
                                   () => isNotEmpty(value),
                                   () => isMoreThanZero(value),
