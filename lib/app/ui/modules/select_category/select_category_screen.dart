@@ -48,9 +48,15 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
               child: Padding(
                 padding: EdgeInsets.fromLTRB(18, 20, 18, 0),
                 child: Column(
+                  spacing: 10,
                   children: state.categories
                       .map((e) => ListTile(
-                            leading: Icon(Icons.category_outlined),
+                            leading: CircleAvatar(
+                              child: e.iconUrl != null
+                                  ? Image.network(e.iconUrl!)
+                                  : Icon(Icons.question_mark),
+                            ),
+                            trailing: Icon(Icons.chevron_right),
                             title: Text(e.name),
                             onTap: () {
                               Navigator.pop(context, SelectCategoryResult(e));

@@ -39,7 +39,9 @@ class BillTileWidget extends StatelessWidget {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: CircleAvatar(
-                child: Icon(Icons.home_outlined),
+                child: bill.categoryLogoUrl != null
+                    ? Image.network(bill.categoryLogoUrl!)
+                    : Icon(Icons.question_mark),
               ),
               title: Text(
                 bill.name,
