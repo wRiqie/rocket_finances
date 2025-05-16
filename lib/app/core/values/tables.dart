@@ -6,4 +6,5 @@ sealed class Tables {
   static const receipts = 'receipts';
   static const categories = 'categories';
   static const budgets = 'budgets';
+  static const aiAnalysis = 'ai_analysis';
 }

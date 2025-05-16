@@ -1,19 +1,16 @@
 class BudgetAddCommand {
   final String name;
   final double value;
-  final String iconUrl;
+  final String userId;
 
-  BudgetAddCommand({
-    required this.name,
-    required this.value,
-    required this.iconUrl,
-  });
+  BudgetAddCommand(
+      {required this.name, required this.value, required this.userId});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'name': name,
       'value': value,
-      'icon_url': iconUrl,
+      'user_id': userId,
     };
   }
 }

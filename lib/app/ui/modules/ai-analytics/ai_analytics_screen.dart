@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:rocket_finances/app/core/values/images.dart';
 import 'package:rocket_finances/app/ui/shared/widgets/gradient_text.dart';
+import 'package:rocket_finances/routes/app_pages.dart';
 
 class AiAnalyticsScreen extends StatefulWidget {
   const AiAnalyticsScreen({super.key});
@@ -116,7 +117,7 @@ class _AiAnalyticsScreenState extends State<AiAnalyticsScreen>
                   align: TextAlign.center,
                 ),
                 Text(
-                  'Nossa IA analisará seus dados financeiros dos últimos 3 meses para fornecer insights personalizados e sugestões acionáveis.',
+                  'Nossa IA analisará seus dados financeiros para fornecer insights personalizados e sugestões acionáveis.',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
@@ -155,7 +156,9 @@ class _AiAnalyticsScreenState extends State<AiAnalyticsScreen>
                       borderRadius: BorderRadius.circular(30)),
                   height: 45,
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.goal);
+                    },
                     label: Text('Analisar com IA'),
                     icon: SvgPicture.asset(
                       Images.sparkles,

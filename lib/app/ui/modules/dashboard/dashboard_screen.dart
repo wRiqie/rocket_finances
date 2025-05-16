@@ -7,7 +7,7 @@ import 'package:rocket_finances/app/business_logic/cubits/bills/bills_state.dart
 import 'package:rocket_finances/app/business_logic/cubits/receipts/receipts_cubit.dart';
 import 'package:rocket_finances/app/business_logic/cubits/receipts/receipts_state.dart';
 import 'package:rocket_finances/app/core/helpers/session_helper.dart';
-import 'package:rocket_finances/app/ui/modules/analytics/ai_analytics.dart';
+import 'package:rocket_finances/app/ui/modules/ai-analytics/ai_analytics.dart';
 import 'package:rocket_finances/app/ui/modules/home/home.dart';
 import 'package:rocket_finances/app/ui/shared/widgets/logged_app_bar_widget.dart';
 import 'package:rocket_finances/routes/app_pages.dart';
@@ -73,15 +73,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
           preferredSize: Size(size.width, 90),
           child: LoggedAppBarWidget(
             user: sessionHelper.currentUser,
-            onTapNotifications: () {},
+            onTapBudget: () async {
+              await Navigator.pushNamed(context, AppRoutes.budgets);
+              await _loadSession();
+            },
             onTapSettings: () =>
                 Navigator.pushNamed(context, AppRoutes.settings),
           ),
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () {},
-        //   child: Icon(Icons.add),
-        // ),
         floatingActionButton: SpeedDial(
           icon: Icons.add,
           activeIcon: Icons.close,
@@ -162,8 +161,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final result = await Navigator.pushNamed(context, AppRoutes.addBill);
 
     if (result == true) {
-      await sessionHelper.loadActualSession();
-      setState(() {});
+      await _loadSession();
       if (mounted) {
         BlocProvider.of<BillsCubit>(context)
             .getAllByUserId(sessionHelper.currentUser?.id ?? '');
@@ -175,12 +173,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final result = await Navigator.pushNamed(context, AppRoutes.addReceipt);
 
     if (result == true) {
-      await sessionHelper.loadActualSession();
-      setState(() {});
+      await _loadSession();
       if (mounted) {
         BlocProvider.of<ReceiptsCubit>(context)
             .getAllByUserId(sessionHelper.currentUser?.id ?? '');
       }
     }
+  }
+
+  Future<void> _loadSession() async {
+    await sessionHelper.loadActualSession();
+    setState(() {});
   }
 }

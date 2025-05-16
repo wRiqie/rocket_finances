@@ -12,4 +12,8 @@ class AppRoutes {
   static const addReceipt = '/add-receipt';
   static const selectCategory = '/select-category';
   static const bills = '/bills';
+  static const budgets = '/budgets';
+  static const addBudget = '/add-budget';
+  static const loadingAnalysis = '/loading_analysis';
+  static const goal = '/goal';
 }

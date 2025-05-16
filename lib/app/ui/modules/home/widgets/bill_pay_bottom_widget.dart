@@ -158,7 +158,7 @@ class _BillPayBottomWidgetState extends State<BillPayBottomWidget>
                                 keyboardType: TextInputType.number,
                                 validator: (value) => combine([
                                   () => isNotEmpty(value),
-                                  () => isMoreThanZero(value),
+                                  () => isMoreThanZeroMoney(value),
                                   () => isLessThanOrEqualTo(
                                       value, widget.bill.remainingValue),
                                 ]),

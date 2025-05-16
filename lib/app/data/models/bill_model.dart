@@ -51,5 +51,5 @@ extension BillsExt on List<BillModel> {
 
   double get totalPaidProportion => totalPaid / value;
 
-  int get paidPercentage => ((totalPaid / value) * 100).round();
+  String get paidPercentage => ((totalPaid / value) * 100).toStringAsFixed(1);
 }

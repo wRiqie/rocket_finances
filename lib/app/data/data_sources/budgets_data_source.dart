@@ -24,7 +24,8 @@ class BudgetsDataSourceSupaImp implements BudgetsDataSource {
     final response = await _client
         .from(Tables.budgets)
         .select('id, name, value')
-        .eq('user_id', id);
+        .eq('user_id', id)
+        .eq('is_excluded', false);
 
     return response.isNotEmpty
         ? response.map((e) => BudgetModel.fromMap(e)).toList()
@@ -46,6 +47,8 @@ class BudgetsDataSourceSupaImp implements BudgetsDataSource {
 
   @override
   Future<void> deleteBudgetById(int id) async {
-    await _client.from(Tables.budgets).delete().eq('id', id);
+    await _client
+        .from(Tables.budgets)
+        .update({'is_excluded': true}).eq('id', id);
   }
 }

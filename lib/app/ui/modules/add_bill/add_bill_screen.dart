@@ -146,7 +146,7 @@ class _AddBillScreenState extends State<AddBillScreen> with ValidatorsMixin {
                             inputFormatters: [AppHelpers.currencyFormatter()],
                             validator: (value) => combine([
                               () => isNotEmpty(value),
-                              () => isMoreThanZero(value),
+                              () => isMoreThanZeroMoney(value),
                             ]),
                           ),
                         ],

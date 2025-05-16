@@ -135,7 +135,7 @@ class _AddReceiptScreenState extends State<AddReceiptScreen>
                             onFieldSubmitted: (value) => _save(),
                             validator: (value) => combine([
                               () => isNotEmpty(value),
-                              () => isMoreThanZero(value),
+                              () => isMoreThanZeroMoney(value),
                             ]),
                           ),
                         ],

@@ -4,10 +4,10 @@ import 'package:rocket_finances/app/data/models/user_model.dart';
 
 class LoggedAppBarWidget extends StatelessWidget {
   final UserModel? user;
-  final VoidCallback? onTapNotifications;
+  final VoidCallback? onTapBudget;
   final VoidCallback? onTapSettings;
   const LoggedAppBarWidget(
-      {super.key, this.user, this.onTapNotifications, this.onTapSettings});
+      {super.key, this.user, this.onTapBudget, this.onTapSettings});
 
   @override
   Widget build(BuildContext context) {
@@ -60,15 +60,28 @@ class LoggedAppBarWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: onTapNotifications,
-                          icon: Icon(Icons.notifications_outlined),
+                    // Row(
+                    //   children: [
+                    //     IconButton(
+                    //       onPressed: onTapNotifications,
+                    //       icon: Icon(Icons.wallet_outlined),
+                    //     ),
+                    //     IconButton(
+                    //       onPressed: onTapSettings,
+                    //       icon: Icon(Icons.settings_outlined),
+                    //     ),
+                    //   ],
+                    // ),
+                    PopupMenuButton(
+                      icon: Icon(Icons.more_vert),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          onTap: onTapBudget,
+                          child: Text('Carteira'),
                         ),
-                        IconButton(
-                          onPressed: onTapSettings,
-                          icon: Icon(Icons.settings_outlined),
+                        PopupMenuItem(
+                          onTap: onTapSettings,
+                          child: Text('Configurações'),
                         ),
                       ],
                     ),

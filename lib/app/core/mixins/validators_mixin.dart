@@ -49,6 +49,14 @@ mixin ValidatorsMixin {
   }
 
   String? isMoreThanZero(String? value, [String? message]) {
+    final parsed = int.tryParse(value ?? '') ?? 0;
+    if (parsed <= 0) {
+      return message ?? 'O valor não pode ser 0';
+    }
+    return null;
+  }
+
+  String? isMoreThanZeroMoney(String? value, [String? message]) {
     if ((value ?? '') == 'R\$ 0,00') {
       return message ?? 'O valor não pode ser 0';
     }

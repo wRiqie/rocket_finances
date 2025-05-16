@@ -7,8 +7,8 @@ import 'package:rocket_finances/app/business_logic/cubits/receipts/receipts_cubi
 import 'package:rocket_finances/app/business_logic/cubits/receipts/receipts_state.dart';
 import 'package:rocket_finances/app/data/models/args/add_receipt_args.dart';
 import 'package:rocket_finances/app/ui/modules/home/widgets/receipt_tile_widget.dart';
-import 'package:rocket_finances/app/ui/modules/home/widgets/transaction_options_bottom_widget.dart';
 import 'package:rocket_finances/app/ui/shared/dialogs/decision_dialog.dart';
+import 'package:rocket_finances/app/ui/shared/widgets/options_bottom_widget.dart';
 import 'package:rocket_finances/routes/app_pages.dart';
 
 import '../../../../core/helpers/session_helper.dart';
@@ -50,7 +50,7 @@ class _ReceiptsWidgetState extends State<ReceiptsWidget> {
                             onTap: () {
                               showModalBottomSheet(
                                 context: context,
-                                builder: (_) => TransactionOptionsBottomWidget(
+                                builder: (_) => OptionsBottomWidget(
                                   onEdit: () async {
                                     final result = await Navigator.pushNamed(
                                       context,
