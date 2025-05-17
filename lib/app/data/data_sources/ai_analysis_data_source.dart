@@ -6,7 +6,7 @@ import 'package:rocket_finances/app/data/models/commands/ai_analysis_command.dar
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class AiAnalysisDataSource {
-  Future<AnalysisModel> requestAnalysis(AiAnalysisCommand command);
+  Future<void> requestAnalysis(AiAnalysisCommand command);
 
   Future<AnalysisModel?> getAnalysisByUserId(String id);
 }
@@ -17,18 +17,16 @@ class AiAnalysisDataSourceSupaImp implements AiAnalysisDataSource {
   AiAnalysisDataSourceSupaImp(this._client);
 
   @override
-  Future<AnalysisModel> requestAnalysis(AiAnalysisCommand command) async {
-    final response = await _client.functions.invoke(
+  Future<void> requestAnalysis(AiAnalysisCommand command) async {
+    await _client.functions.invoke(
       Functions.requestAnalysis,
       method: HttpMethod.post,
       body: command.toMap(),
       headers: {
         HttpHeaders.authorizationHeader:
-            _client.auth.currentSession?.accessToken ?? '',
+            'Bearer ${_client.auth.currentSession?.accessToken}',
       },
     );
-
-    return AnalysisModel.fromMap(response.data);
   }
 
   @override

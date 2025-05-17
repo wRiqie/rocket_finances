@@ -13,8 +13,10 @@ class GoalStepWidget extends StatefulWidget {
 class _GoalStepWidgetState extends State<GoalStepWidget> with ValidatorsMixin {
   final formKey = GlobalKey<FormState>();
 
-  final goalCtrl = TextEditingController();
-  final monthsCtrl = TextEditingController();
+  final goalCtrl = TextEditingController()
+    ..text =
+        "Quero acumular dinheiro por meio de investimentos sábios e alcançar meu primeiro milhão";
+  final monthsCtrl = TextEditingController()..text = "24";
 
   @override
   void dispose() {

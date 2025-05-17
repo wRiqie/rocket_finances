@@ -11,27 +11,30 @@ class AnalysisCubit extends Cubit<AnalysisState> {
     emit(state.copyWith(status: AnalysisStatus.loading));
 
     final response = await _aiAnalysisRepository.requestAnalysis(command);
-    emit(state.copyWith(
-      status: AnalysisStatus.success,
-      analysis: response.data,
-    ));
-    emit(state.copyWith(
-      status: AnalysisStatus.error,
-      error: response.error,
-    ));
+    if (response.isSuccess) {
+      emit(state.copyWith(status: AnalysisStatus.success));
+    } else {
+      emit(state.copyWith(
+        status: AnalysisStatus.error,
+        error: response.error,
+      ));
+    }
   }
 
   void getAnalysisById(String id) async {
     emit(state.copyWith(status: AnalysisStatus.loading));
 
     final response = await _aiAnalysisRepository.getAnalysisByUserId(id);
-    emit(state.copyWith(
-      status: AnalysisStatus.success,
-      analysis: response.data,
-    ));
-    emit(state.copyWith(
-      status: AnalysisStatus.error,
-      error: response.error,
-    ));
+    if (response.isSuccess) {
+      emit(state.copyWith(
+        status: AnalysisStatus.success,
+        analysis: response.data,
+      ));
+    } else {
+      emit(state.copyWith(
+        status: AnalysisStatus.error,
+        error: response.error,
+      ));
+    }
   }
 }

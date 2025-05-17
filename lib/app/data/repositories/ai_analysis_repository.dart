@@ -5,8 +5,7 @@ import 'package:rocket_finances/app/data/models/default_response_model.dart';
 import 'package:rocket_finances/app/data/services/execute_service.dart';
 
 abstract class AiAnalysisRepository {
-  Future<DefaultResponseModel<AnalysisModel>> requestAnalysis(
-      AiAnalysisCommand command);
+  Future<DefaultResponseModel<void>> requestAnalysis(AiAnalysisCommand command);
 
   Future<DefaultResponseModel<AnalysisModel>> getAnalysisByUserId(String id);
 }
@@ -23,7 +22,7 @@ class AiAnalysisRepositoryImp implements AiAnalysisRepository {
   }
 
   @override
-  Future<DefaultResponseModel<AnalysisModel>> requestAnalysis(
+  Future<DefaultResponseModel<void>> requestAnalysis(
       AiAnalysisCommand command) {
     {
       return ExecuteService.tryExecuteAsync(

@@ -15,9 +15,9 @@ class _SkillsStepWidgetState extends State<SkillsStepWidget>
     with ValidatorsMixin {
   final formKey = GlobalKey<FormState>();
 
-  final skillOneCtrl = TextEditingController();
-  final skillTwoCtrl = TextEditingController();
-  final skillThreeCtrl = TextEditingController();
+  final skillOneCtrl = TextEditingController()..text = "Programação";
+  final skillTwoCtrl = TextEditingController()..text = "Visão de empreendedor";
+  final skillThreeCtrl = TextEditingController()..text = "Marketing";
 
   final gradient = LinearGradient(
     colors: [

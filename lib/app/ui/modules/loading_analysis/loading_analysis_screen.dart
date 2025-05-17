@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rocket_finances/app/business_logic/cubits/analysis/analysis_cubit.dart';
+import 'package:rocket_finances/app/business_logic/cubits/analysis/analysis_state.dart';
 import 'package:rocket_finances/app/core/values/animations.dart';
+import 'package:rocket_finances/app/core/values/snackbars.dart';
 import 'package:rocket_finances/app/data/models/args/loading_analysis_args.dart';
 import 'package:rocket_finances/app/data/models/commands/ai_analysis_command.dart';
 import 'package:rocket_finances/app/ui/shared/widgets/gradient_text.dart';
@@ -30,32 +32,19 @@ class _LoadingAnalysisScreenState extends State<LoadingAnalysisScreen> {
   @override
   void initState() {
     super.initState();
-    progress.addListener(() {
-      if (progress.value == 1) {
-        Future.delayed(Duration(milliseconds: 500), () {
-          if (mounted) {
-            Navigator.pop(context);
-          }
-        });
-      }
-    });
-    timer = Timer.periodic(Duration(milliseconds: 500), (tick) {
-      if (progress.value == 1) {
-        return;
-      } else if (progress.value == .75) {
-        final isFinished =
-            BlocProvider.of<AnalysisCubit>(context).state.analysis != null;
-        if (isFinished) {
-          setState(() {
-            progress.value = 1;
+    BlocProvider.of<AnalysisCubit>(context).stream.listen(
+      (event) {
+        if (event.status.isSuccess) {
+          Future.delayed(Duration(milliseconds: 500), () {
+            if (mounted) {
+              Navigator.pop(context, true);
+            }
           });
         }
-      } else {
-        setState(() {
-          progress.value += .25;
-        });
-      }
-    });
+      },
+    );
+    timer = _getTimer();
+
     scheduleMicrotask(_requestAnalysis);
   }
 
@@ -70,98 +59,133 @@ class _LoadingAnalysisScreenState extends State<LoadingAnalysisScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        bottomNavigationBar: Padding(
-          padding: EdgeInsets.only(
-              bottom: MediaQuery.paddingOf(context).bottom,
-              left: 18,
-              right: 18),
-          child: Text(
-            'Leva de 5 a 15 segundos normalmente',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: colorScheme.onSurface.withValues(alpha: .6),
-            ),
-          ),
-        ),
-        body: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+    return BlocListener<AnalysisCubit, AnalysisState>(
+      listener: (context, state) {
+        if (state.status.isError) {
+          ErrorSnackbar(context, message: state.error?.message);
+        }
+      },
+      child: PopScope(
+        canPop: false,
+        child: BlocBuilder<AnalysisCubit, AnalysisState>(
+          builder: (context, state) {
+            if (state.status.isError) {
+              return Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Lottie.asset(Animations.aiThinking, width: 150),
+                      Text('Ocorreu um erro'),
+                      TextButton.icon(
+                        onPressed: () {
+                          progress.value = 0;
+                          timer = _getTimer();
+                          _requestAnalysis();
+                        },
+                        icon: Icon(Icons.refresh),
+                        label: Text('Tentar novamente'),
+                      ),
                     ],
                   ),
-                  SizedBox(
-                    height: 20,
+                ),
+              );
+            }
+
+            return Scaffold(
+              bottomNavigationBar: Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.paddingOf(context).bottom,
+                    left: 18,
+                    right: 18),
+                child: Text(
+                  'Leva de 5 a 15 segundos normalmente',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: colorScheme.onSurface.withValues(alpha: .6),
                   ),
-                  GradientText(
-                    'Gerando sua análise!',
-                    gradient: gradient,
-                    align: TextAlign.center,
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
-                  ),
-                  SizedBox(
-                    height: 6,
-                  ),
-                  Text(
-                    'Em segundos você terá uma análise completa de suas finanças!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: colorScheme.onSurface.withValues(alpha: .6),
+                ),
+              ),
+              body: SafeArea(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Lottie.asset(Animations.aiThinking, width: 150),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        GradientText(
+                          'Gerando sua análise!',
+                          gradient: gradient,
+                          align: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 28, fontWeight: FontWeight.w800),
+                        ),
+                        SizedBox(
+                          height: 6,
+                        ),
+                        Text(
+                          'Em segundos você terá uma análise completa de suas finanças!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: colorScheme.onSurface.withValues(alpha: .6),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            return Stack(
+                              children: [
+                                Container(
+                                  width: constraints.maxWidth,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.onSurface
+                                        .withValues(alpha: .08),
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                Container(
+                                  width: constraints.maxWidth * progress.value,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    gradient: gradient,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                                '${(progress.value * 100).toStringAsFixed(0)}% gerado'),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      return Stack(
-                        children: [
-                          Container(
-                            width: constraints.maxWidth,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color:
-                                  colorScheme.onSurface.withValues(alpha: .08),
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          Container(
-                            width: constraints.maxWidth * .5,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              gradient: gradient,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text('30% gerado'),
-                    ],
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
@@ -182,5 +206,15 @@ class _LoadingAnalysisScreenState extends State<LoadingAnalysisScreen> {
     } else {
       Navigator.pop(context);
     }
+  }
+
+  Timer _getTimer() {
+    return Timer.periodic(Duration(milliseconds: 1000), (tick) {
+      if (progress.value <= .75) {
+        setState(() {
+          progress.value += .25;
+        });
+      }
+    });
   }
 }

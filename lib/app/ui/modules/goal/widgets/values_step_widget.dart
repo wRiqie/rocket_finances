@@ -14,8 +14,10 @@ class _ValuesStepWidgetState extends State<ValuesStepWidget>
     with ValidatorsMixin {
   final formKey = GlobalKey<FormState>();
 
-  final requiredValueCtrl = TextEditingController();
-  final savedValueCtrl = TextEditingController();
+  final requiredValueCtrl = TextEditingController()
+    ..text = AppHelpers.formatCurrency(1000000);
+  final savedValueCtrl = TextEditingController()
+    ..text = AppHelpers.formatCurrency(930);
 
   final gradient = LinearGradient(
     colors: [
@@ -128,7 +130,7 @@ class _ValuesStepWidgetState extends State<ValuesStepWidget>
 
     final requiredValue =
         AppHelpers.revertCurrency(requiredValueCtrl.text) * 1.0;
-    final savedValue = AppHelpers.revertCurrency(requiredValueCtrl.text) * 1.0;
+    final savedValue = AppHelpers.revertCurrency(savedValueCtrl.text) * 1.0;
 
     widget.onConfirm(requiredValue, savedValue);
   }
