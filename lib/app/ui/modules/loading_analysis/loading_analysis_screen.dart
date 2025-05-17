@@ -1,6 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:rocket_finances/app/business_logic/cubits/analysis/analysis_cubit.dart';
 import 'package:rocket_finances/app/core/values/animations.dart';
+import 'package:rocket_finances/app/data/models/args/loading_analysis_args.dart';
+import 'package:rocket_finances/app/data/models/commands/ai_analysis_command.dart';
 import 'package:rocket_finances/app/ui/shared/widgets/gradient_text.dart';
 
 class LoadingAnalysisScreen extends StatefulWidget {
@@ -17,6 +23,49 @@ class _LoadingAnalysisScreenState extends State<LoadingAnalysisScreen> {
       const Color.fromARGB(255, 148, 94, 240),
     ],
   );
+
+  late Timer timer;
+  ValueNotifier<double> progress = ValueNotifier(0);
+
+  @override
+  void initState() {
+    super.initState();
+    progress.addListener(() {
+      if (progress.value == 1) {
+        Future.delayed(Duration(milliseconds: 500), () {
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        });
+      }
+    });
+    timer = Timer.periodic(Duration(milliseconds: 500), (tick) {
+      if (progress.value == 1) {
+        return;
+      } else if (progress.value == .75) {
+        final isFinished =
+            BlocProvider.of<AnalysisCubit>(context).state.analysis != null;
+        if (isFinished) {
+          setState(() {
+            progress.value = 1;
+          });
+        }
+      } else {
+        setState(() {
+          progress.value += .25;
+        });
+      }
+    });
+    scheduleMicrotask(_requestAnalysis);
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    progress.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -116,5 +165,22 @@ class _LoadingAnalysisScreenState extends State<LoadingAnalysisScreen> {
         ),
       ),
     );
+  }
+
+  void _requestAnalysis() {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is LoadingAnalysisArgs) {
+      final command = AiAnalysisCommand(
+        skills: args.skills,
+        goal: args.goalDescription,
+        requiredValue: args.requiredValue,
+        savedValue: args.savedValue,
+        due: args.due,
+      );
+
+      BlocProvider.of<AnalysisCubit>(context).requestAnalysis(command);
+    } else {
+      Navigator.pop(context);
+    }
   }
 }

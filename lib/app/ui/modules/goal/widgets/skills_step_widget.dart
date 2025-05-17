@@ -103,8 +103,7 @@ class _SkillsStepWidgetState extends State<SkillsStepWidget>
                     ),
                     TextFormField(
                       controller: skillOneCtrl,
-                      maxLines: 4,
-                      minLines: 1,
+                      textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
                           hintText: 'ex: Programação, Design, Copywriting...'),
                       validator: isNotEmpty,
@@ -126,8 +125,7 @@ class _SkillsStepWidgetState extends State<SkillsStepWidget>
                     ),
                     TextFormField(
                       controller: skillTwoCtrl,
-                      maxLines: 4,
-                      minLines: 1,
+                      textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
                           hintText: 'ex: Contabilidade, Administração...'),
                       textInputAction: TextInputAction.next,
@@ -148,12 +146,11 @@ class _SkillsStepWidgetState extends State<SkillsStepWidget>
                     ),
                     TextFormField(
                       controller: skillThreeCtrl,
-                      maxLines: 4,
-                      minLines: 1,
+                      textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
                           hintText: 'ex: Marketing, Linguagens,...'),
-                      textInputAction: TextInputAction.next,
                       maxLength: 100,
+                      onFieldSubmitted: (value) => _onConfirm(),
                     ),
                   ],
                 ),

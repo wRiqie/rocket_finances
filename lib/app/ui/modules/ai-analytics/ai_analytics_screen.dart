@@ -1,7 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get_it/get_it.dart';
+import 'package:rocket_finances/app/business_logic/cubits/analysis/analysis_cubit.dart';
+import 'package:rocket_finances/app/business_logic/cubits/analysis/analysis_state.dart';
+import 'package:rocket_finances/app/core/helpers/session_helper.dart';
 import 'package:rocket_finances/app/core/values/images.dart';
 import 'package:rocket_finances/app/ui/shared/widgets/gradient_text.dart';
 import 'package:rocket_finances/routes/app_pages.dart';
@@ -15,6 +20,8 @@ class AiAnalyticsScreen extends StatefulWidget {
 
 class _AiAnalyticsScreenState extends State<AiAnalyticsScreen>
     with SingleTickerProviderStateMixin {
+  final sessionHelper = GetIt.I<SessionHelper>();
+
   late AnimationController animationController;
 
   late Animation<double> fadeAnim;
@@ -46,6 +53,10 @@ class _AiAnalyticsScreenState extends State<AiAnalyticsScreen>
       animationController.reset();
       animationController.forward();
     });
+
+    scheduleMicrotask(() {
+      _loadAnalysis();
+    });
   }
 
   @override
@@ -59,130 +70,156 @@ class _AiAnalyticsScreenState extends State<AiAnalyticsScreen>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22),
-        child: Column(
-          spacing: 24,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
-              alignment: Alignment.center,
+    return BlocBuilder<AnalysisCubit, AnalysisState>(
+      builder: (context, state) {
+        if (state.status.isLoading) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (state.status.isError) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                AnimatedBuilder(
-                    animation: animationController,
-                    builder: (context, _) {
-                      return Transform.scale(
-                        scale: scaleAnim.value,
-                        child: Opacity(
-                          opacity: fadeAnim.value,
-                          child: Container(
-                            padding: EdgeInsets.all(50),
-                            decoration: BoxDecoration(
-                              color: colorScheme.primaryContainer,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer,
-                    shape: BoxShape.circle,
-                  ),
-                  child: SvgPicture.asset(
-                    Images.brain,
-                    width: 60,
-                    colorFilter: ColorFilter.mode(
-                      colorScheme.primary,
-                      BlendMode.srcIn,
-                    ),
-                  ),
+                Text('Ocorreu um erro ao carregar a análise'),
+                TextButton.icon(
+                  onPressed: _loadAnalysis,
+                  icon: Icon(Icons.refresh),
+                  label: Text('Tentar novamente'),
                 ),
               ],
             ),
-            Column(
-              spacing: 10,
-              children: [
-                GradientText(
-                  'Análise Inteligente',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    color: colorScheme.primary,
-                    fontSize: 26,
-                  ),
-                  gradient: gradient,
-                  align: TextAlign.center,
-                ),
-                Text(
-                  'Nossa IA analisará seus dados financeiros para fornecer insights personalizados e sugestões acionáveis.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                _buildItem(
-                    Images.goal,
-                    'Viabilidade de Metas',
-                    'Avaliação se suas metas financeiras são alcançaveis',
-                    Colors.blue),
-                _buildItem(
-                    Images.trendingDown,
-                    'Sugestões de Redução de Custos',
-                    'Identificação de áreas onde você pode economizar',
-                    Colors.green),
-                _buildItem(
-                    Images.trendingUp,
-                    'Dicas de Renda Extra',
-                    'Sugestões para aumentar sua renda com base no seu perfil',
-                    Colors.orange),
-                SizedBox(
-                  height: 30,
-                ),
-                // SizedBox(
-                //   height: 45,
-                //   child: ElevatedButton.icon(
-                //     onPressed: null,
-                //     label: Text('Anote suas finanças por 3 meses'),
-                //     icon: Icon(Icons.lock),
-                //   ),
-                // ),
-                Container(
-                  decoration: BoxDecoration(
-                      gradient: gradient,
-                      borderRadius: BorderRadius.circular(30)),
-                  height: 45,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.goal);
-                    },
-                    label: Text('Analisar com IA'),
-                    icon: SvgPicture.asset(
-                      Images.sparkles,
-                      width: 20,
-                      colorFilter: ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+          );
+        } else if (state.status.isSuccess) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              child: Column(
+                spacing: 24,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      AnimatedBuilder(
+                          animation: animationController,
+                          builder: (context, _) {
+                            return Transform.scale(
+                              scale: scaleAnim.value,
+                              child: Opacity(
+                                opacity: fadeAnim.value,
+                                child: Container(
+                                  padding: EdgeInsets.all(50),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.primaryContainer,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                      Container(
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: colorScheme.primaryContainer,
+                          shape: BoxShape.circle,
                         ),
-                        foregroundColor: Colors.white,
-                        iconColor: Colors.white),
+                        child: SvgPicture.asset(
+                          Images.brain,
+                          width: 60,
+                          colorFilter: ColorFilter.mode(
+                            colorScheme.primary,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
+                  Column(
+                    spacing: 10,
+                    children: [
+                      GradientText(
+                        'Análise Inteligente',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          color: colorScheme.primary,
+                          fontSize: 26,
+                        ),
+                        gradient: gradient,
+                        align: TextAlign.center,
+                      ),
+                      Text(
+                        'Nossa IA analisará seus dados financeiros para fornecer insights personalizados e sugestões acionáveis.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      _buildItem(
+                          Images.goal,
+                          'Viabilidade de Metas',
+                          'Avaliação se suas metas financeiras são alcançaveis',
+                          Colors.blue),
+                      _buildItem(
+                          Images.trendingDown,
+                          'Sugestões de Redução de Custos',
+                          'Identificação de áreas onde você pode economizar',
+                          Colors.green),
+                      _buildItem(
+                          Images.trendingUp,
+                          'Dicas de Renda Extra',
+                          'Sugestões para aumentar sua renda com base no seu perfil',
+                          Colors.orange),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      // SizedBox(
+                      //   height: 45,
+                      //   child: ElevatedButton.icon(
+                      //     onPressed: null,
+                      //     label: Text('Anote suas finanças por 3 meses'),
+                      //     icon: Icon(Icons.lock),
+                      //   ),
+                      // ),
+                      Container(
+                        decoration: BoxDecoration(
+                            gradient: gradient,
+                            borderRadius: BorderRadius.circular(30)),
+                        height: 45,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppRoutes.goal);
+                          },
+                          label: Text('Analisar com IA'),
+                          icon: SvgPicture.asset(
+                            Images.sparkles,
+                            width: 20,
+                            colorFilter: ColorFilter.mode(
+                              Colors.white,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              foregroundColor: Colors.white,
+                              iconColor: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 50),
+                ],
+              ),
+            ),
+          );
+        }
+        return SizedBox();
+      },
     );
   }
 
@@ -211,5 +248,11 @@ class _AiAnalyticsScreenState extends State<AiAnalyticsScreen>
         style: TextStyle(color: colorScheme.onSurface.withValues(alpha: .7)),
       ),
     );
+  }
+
+  void _loadAnalysis() {
+    final userId = sessionHelper.currentUser?.id;
+
+    BlocProvider.of<AnalysisCubit>(context).getAnalysisById(userId ?? '');
   }
 }

@@ -1,15 +1,15 @@
 class AiAnalysisCommand {
   final List<String> skills;
   final String goal;
-  final String requiredValue;
-  final String savedValue;
-  final String due;
+  final double requiredValue;
+  final double? savedValue;
+  final int due;
 
   AiAnalysisCommand(
       {required this.skills,
       required this.goal,
       required this.requiredValue,
-      required this.savedValue,
+      this.savedValue,
       required this.due});
 
   Map<String, dynamic> toMap() {

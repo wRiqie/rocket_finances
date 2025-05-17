@@ -1,7 +1,7 @@
 class ReductionSugestionModel {
   final String name;
-  final String currentValue;
-  final String suggestionValue;
+  final double currentValue;
+  final double suggestionValue;
   final String description;
 
   ReductionSugestionModel(
@@ -13,8 +13,8 @@ class ReductionSugestionModel {
   factory ReductionSugestionModel.fromMap(Map<String, dynamic> map) {
     return ReductionSugestionModel(
       name: map['nome'],
-      currentValue: map['valor_atual'],
-      suggestionValue: map['valor_sugerido'],
+      currentValue: map['valor_atual'] * 1.0,
+      suggestionValue: map['valor_sugerido'] * 1.0,
       description: map['descricao'],
     );
   }

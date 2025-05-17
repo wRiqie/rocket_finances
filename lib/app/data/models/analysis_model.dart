@@ -17,21 +17,17 @@ class AnalysisModel {
   });
 
   factory AnalysisModel.fromMap(Map<String, dynamic> map) {
+    final data = map['result'];
+
     return AnalysisModel(
-      goalStatus: map['meta_ok'],
-      monthlySavings: map['economia_mensal'],
-      analysis: map['analise'],
-      reductionSugestions: List<ReductionSugestionModel>.from(
-        (map['sugestoes_de_reducao'] as List<int>).map<ReductionSugestionModel>(
-          (x) => ReductionSugestionModel.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      extraBudgetSugestions: List<ExtraBudgetSugestionModel>.from(
-        (map['sugestoes_renda_extra'] as List<int>)
-            .map<ExtraBudgetSugestionModel>(
-          (x) => ExtraBudgetSugestionModel.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-    );
+        goalStatus: data['meta_ok'],
+        monthlySavings: data['economia_mensal'] * 1.0,
+        analysis: data['analise'],
+        reductionSugestions: (data['sugestoes_de_reducao'] as List)
+            .map((x) => ReductionSugestionModel.fromMap(x))
+            .toList(),
+        extraBudgetSugestions: (data['sugestoes_renda_extra'] as List)
+            .map((x) => ExtraBudgetSugestionModel.fromMap(x))
+            .toList());
   }
 }

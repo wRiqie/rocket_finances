@@ -81,6 +81,7 @@ class _GoalStepWidgetState extends State<GoalStepWidget> with ValidatorsMixin {
                   controller: goalCtrl,
                   maxLines: 4,
                   minLines: 1,
+                  textCapitalization: TextCapitalization.sentences,
                   decoration:
                       InputDecoration(hintText: 'Descreva seu objetivo'),
                   validator: isNotEmpty,

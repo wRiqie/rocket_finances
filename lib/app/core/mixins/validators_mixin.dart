@@ -57,7 +57,8 @@ mixin ValidatorsMixin {
   }
 
   String? isMoreThanZeroMoney(String? value, [String? message]) {
-    if ((value ?? '') == 'R\$ 0,00') {
+    var reverted = AppHelpers.revertCurrency(value ?? '0');
+    if (reverted <= 0) {
       return message ?? 'O valor não pode ser 0';
     }
     return null;

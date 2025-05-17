@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rocket_finances/app/data/models/args/loading_analysis_args.dart';
 import 'package:rocket_finances/app/ui/modules/goal/widgets/goal_step_widget.dart';
 import 'package:rocket_finances/app/ui/modules/goal/widgets/skills_step_widget.dart';
+import 'package:rocket_finances/app/ui/modules/goal/widgets/values_step_widget.dart';
 import 'package:rocket_finances/routes/app_pages.dart';
 
 class GoalScreen extends StatefulWidget {
@@ -15,7 +17,10 @@ class _GoalScreenState extends State<GoalScreen> {
   int currentIndex = 0;
 
   String? goalDescription;
-  int? months;
+  int? due;
+  double? requiredValue;
+  double? savedValue;
+  List<String> skills = [];
 
   @override
   void initState() {
@@ -24,7 +29,16 @@ class _GoalScreenState extends State<GoalScreen> {
       GoalStepWidget(
         onNext: (goal, months) {
           goalDescription = goal;
-          months = months;
+          due = months;
+          setState(() {
+            currentIndex++;
+          });
+        },
+      ),
+      ValuesStepWidget(
+        onConfirm: (requiredValue, savedValue) {
+          this.requiredValue = requiredValue;
+          this.savedValue = savedValue;
           setState(() {
             currentIndex++;
           });
@@ -32,7 +46,16 @@ class _GoalScreenState extends State<GoalScreen> {
       ),
       SkillsStepWidget(
         onConfirm: (skills) {
-          Navigator.pushReplacementNamed(context, AppRoutes.loadingAnalysis);
+          this.skills = skills;
+          final args = LoadingAnalysisArgs(
+            skills: this.skills,
+            goalDescription: goalDescription ?? '',
+            requiredValue: requiredValue ?? 0,
+            savedValue: savedValue ?? 0,
+            due: due ?? 0,
+          );
+          Navigator.pushReplacementNamed(context, AppRoutes.loadingAnalysis,
+              arguments: args);
         },
       ),
     ];
